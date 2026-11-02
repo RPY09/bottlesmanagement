@@ -675,7 +675,7 @@ function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose,
         </div>
 
         {/* Bottom Bar with Add New Customer */}
-        {filtered.length > 0 && (
+        {customerItems.length > 0 && (
           <div className="om-nested-footer">
             <button
               type="button"
