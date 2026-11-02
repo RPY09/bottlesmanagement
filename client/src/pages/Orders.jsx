@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
 import { CustomerModal } from './Customers';
+import ConfirmDialog from '../components/ConfirmDialog';
 import '../styles/orders.css';
 import {
   Search, Edit2, Trash2, ShoppingCart,
@@ -1584,11 +1585,11 @@ export default function Orders() {
 
   const handleDelete = async (id) => {
     if (deletingId) return;
-    if (!window.confirm('Delete this order?')) return;
     setDeletingId(id);
     try {
       await api.delete(`/orders/${id}`);
       setOrders(prev => prev.filter(o => o._id !== id));
+      setDeleteOrderId(null);
       toast.success('Order deleted');
     } catch {
       toast.error('Failed to delete');
@@ -2164,7 +2165,7 @@ export default function Orders() {
                                 className="ob-more-item"
                                 onClick={() => {
                                   setActiveMenuId(null);
-                                  handleDelete(o._id);
+                                  setDeleteOrderId(o._id);
                                 }}
                               >
                                 <Trash2 size={13} />
@@ -2220,6 +2221,15 @@ export default function Orders() {
       </div>
 
       {/* Create / Edit Modal */}
+      <ConfirmDialog
+        open={Boolean(deleteOrderId)}
+        title="Delete order?"
+        message="This permanently deletes the order and all payments linked to it."
+        loading={Boolean(deletingId)}
+        onCancel={() => setDeleteOrderId(null)}
+        onConfirm={() => handleDelete(deleteOrderId)}
+      />
+
       {modal && (
         <OrderModal
           order={modal === 'new' ? null : modal}

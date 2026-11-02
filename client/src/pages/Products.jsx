@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2, Package } from 'lucide-react';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 function ProductModal({ product, onClose, onSave }) {
   const [form, setForm] = useState(product || { size: '500ml', name: '', pricePerUnit: '' });
@@ -63,6 +64,8 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
+  const [deleteProduct, setDeleteProduct] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     api.get('/products').then(r => setProducts(r.data)).catch(() => toast.error('Failed to load')).finally(() => setLoading(false));
@@ -74,16 +77,27 @@ export default function Products() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this product?')) return;
+    if (deleting) return;
+    setDeleting(true);
     try {
       await api.delete(`/products/${id}`);
       setProducts(prev => prev.filter(p => p._id !== id));
+      setDeleteProduct(null);
       toast.success('Product deleted');
     } catch { toast.error('Failed to delete'); }
+    finally { setDeleting(false); }
   };
 
   return (
     <div>
+      <ConfirmDialog
+        open={Boolean(deleteProduct)}
+        title="Delete product?"
+        message="Products used by historical orders may be archived instead of permanently removed."
+        loading={deleting}
+        onCancel={() => setDeleteProduct(null)}
+        onConfirm={() => handleDelete(deleteProduct._id)}
+      />
       <div className="page-header">
         <div>
           <h1 className="page-title">Products & Prices</h1>
@@ -114,7 +128,7 @@ export default function Products() {
               </div>
               <div style={{ display: 'flex', gap: '0.4rem' }}>
                 <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setModal(p)}><Edit2 size={15} /></button>
-                <button className="btn btn-ghost btn-icon btn-sm" style={{ color: 'var(--accent-red)' }} onClick={() => handleDelete(p._id)}><Trash2 size={15} /></button>
+                <button className="btn btn-ghost btn-icon btn-sm" style={{ color: 'var(--accent-red)' }} disabled={deleting} onClick={() => setDeleteProduct(p)}><Trash2 size={15} /></button>
               </div>
             </div>
           ))}

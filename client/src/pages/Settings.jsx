@@ -7,6 +7,7 @@ import {
   Archive, CheckCircle2, RotateCcw, AlertCircle, Tag
 } from 'lucide-react';
 import '../styles/settings.css';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const SIZE_OPTIONS = ['250ml', '300ml', '500ml', '750ml', '1L', '2L', '20L Can'];
@@ -31,6 +32,8 @@ export default function Settings() {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [editingProductId, setEditingProductId] = useState(null);
+  const [deleteProduct, setDeleteProduct] = useState(null);
+  const [deletingProduct, setDeletingProduct] = useState(false);
   const [productForm, setProductForm] = useState({
     name: '',
     size: '500ml',
@@ -206,9 +209,8 @@ export default function Settings() {
 
   // ── Delete Product ──
   const handleDeleteProduct = async (product) => {
-    if (!window.confirm(`Delete "${product.name}"? If past orders use this product, it will be safely archived instead.`)) {
-      return;
-    }
+    if (deletingProduct) return;
+    setDeletingProduct(true);
     try {
       const { data } = await api.delete(`/products/${product._id}`);
       if (data.archived) {
@@ -218,8 +220,11 @@ export default function Settings() {
         toast.success('Product permanently deleted');
         setProducts(prev => prev.filter(p => p._id !== product._id));
       }
+      setDeleteProduct(null);
     } catch {
       toast.error('Failed to delete product');
+    } finally {
+      setDeletingProduct(false);
     }
   };
 
@@ -551,7 +556,7 @@ export default function Settings() {
                                 type="button"
                                 className="set-action-btn delete"
                                 title="Delete product"
-                                onClick={() => handleDeleteProduct(p)}
+                                onClick={() => setDeleteProduct(p)}
                               >
                                 <Trash2 size={14} />
                               </button>
@@ -617,7 +622,7 @@ export default function Settings() {
                         <button
                           type="button"
                           className="set-card-action-link delete"
-                          onClick={() => handleDeleteProduct(p)}
+                          onClick={() => setDeleteProduct(p)}
                         >
                           <Trash2 size={13} /> Delete
                         </button>
@@ -822,6 +827,15 @@ export default function Settings() {
             </div>
           </form>
         </div>
+
+        <ConfirmDialog
+          open={Boolean(deleteProduct)}
+          title="Delete product?"
+          message={deleteProduct ? `Delete "${deleteProduct.name}"? Products used by historical orders may be archived instead.` : ''}
+          loading={deletingProduct}
+          onCancel={() => setDeleteProduct(null)}
+          onConfirm={() => handleDeleteProduct(deleteProduct)}
+        />
 
       </div>
 

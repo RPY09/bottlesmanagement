@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
 import '../styles/customers.css';
+import ConfirmDialog from '../components/ConfirmDialog';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -376,7 +377,7 @@ function AddressAutocomplete({ value, onChange, onOpenMap }) {
               }}
             >
               <Navigation size={15} style={{ marginTop: 2, flexShrink: 0 }} />
-              <span>Can't find exact location? Open Map & Select Visually 🗺️</span>
+              <span>Open this location in Google Maps</span>
             </div>
           </div>
         )}
@@ -406,7 +407,6 @@ export function CustomerModal({ customer, onClose, onSave }) {
 
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
-  const [showMapPicker, setShowMapPicker] = useState(false);
   const [mapConfirmed, setMapConfirmed] = useState(Boolean(customer?.address));
   const [isDragOver, setIsDragOver] = useState(false);
   const [touched, setTouched] = useState({ name: false, phone: false });
@@ -425,6 +425,12 @@ export function CustomerModal({ customer, onClose, onSave }) {
   // Validation
   const isNameValid = name.trim().length >= 2;
   const isPhoneValid = /^[6-9]\d{9}$/.test(phoneDigits.trim());
+
+  const openGoogleMaps = () => {
+    const query = address.trim();
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query || 'India')}`;
+    window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+  };
 
   // Smooth exit transition
   const triggerClose = useCallback(() => {
@@ -676,15 +682,15 @@ export function CustomerModal({ customer, onClose, onSave }) {
                     setAddress(val);
                     setMapConfirmed(false);
                   }}
-                  onOpenMap={() => setShowMapPicker(true)}
+                  onOpenMap={openGoogleMaps}
                 />
 
                 <button
                   type="button"
                   className="cm-map-btn"
-                  onClick={() => setShowMapPicker(true)}
+                  onClick={openGoogleMaps}
                 >
-                  <MapPin size={16} /> Select location on map
+                  <MapPin size={16} /> Open in Google Maps
                 </button>
 
                 {mapConfirmed && address && (
@@ -824,17 +830,6 @@ export function CustomerModal({ customer, onClose, onSave }) {
         </div>
       </div>
 
-      {/* Map Picker Modal */}
-      {showMapPicker && (
-        <MapLocationPicker
-          initialAddress={address}
-          onSelect={(selectedAddr) => {
-            setAddress(selectedAddr);
-            setMapConfirmed(true);
-          }}
-          onClose={() => setShowMapPicker(false)}
-        />
-      )}
     </>
   );
 }
@@ -1476,6 +1471,7 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteCustomerId, setDeleteCustomerId] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -1535,12 +1531,12 @@ export default function Customers() {
 
   const handleDelete = async (id) => {
     if (deletingId) return;
-    if (!window.confirm('Delete this customer?')) return;
     setDeletingId(id);
     try {
       await api.delete(`/customers/${id}`);
       setCustomers(prev => prev.filter(c => c._id !== id));
       if (detail?._id === id) setDetail(null);
+      setDeleteCustomerId(null);
       toast.success('Customer deleted');
     } catch { toast.error('Failed to delete'); }
     finally { setDeletingId(null); }
@@ -1564,6 +1560,14 @@ export default function Customers() {
 
   return (
     <div className="customers-page-shell">
+      <ConfirmDialog
+        open={Boolean(deleteCustomerId)}
+        title="Delete customer?"
+        message="This permanently deletes the customer record. Existing order history is not removed."
+        loading={Boolean(deletingId)}
+        onCancel={() => setDeleteCustomerId(null)}
+        onConfirm={() => handleDelete(deleteCustomerId)}
+      />
       {/* ── Pinned Top Controls (Header + Search Bar) ── */}
       <div className="customers-top-controls">
         <div className="page-header" style={{ marginBottom: '0.85rem' }}>
@@ -1737,7 +1741,7 @@ export default function Customers() {
                         <button
                           type="button"
                           className="customer-card-action-btn danger"
-                          onClick={() => handleDelete(c._id)}
+                          onClick={() => setDeleteCustomerId(c._id)}
                           disabled={Boolean(deletingId)}
                           title="Delete customer"
                           aria-label={`Delete ${c.name}`}
