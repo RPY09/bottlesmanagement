@@ -93,7 +93,7 @@ export default function Products() {
       </div>
 
       {/* Info card */}
-      <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)', borderRadius: 12, padding: '0.875rem 1.25rem', marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+      <div style={{ background: 'var(--palette-ocean-soft)', border: '1px solid rgba(2,119,182,0.15)', borderRadius: 12, padding: '0.875rem 1.25rem', marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
         💡 Product prices are automatically suggested when creating orders. You can override them per order.
       </div>
 
@@ -101,7 +101,7 @@ export default function Products() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
           {products.map(p => (
             <div key={p._id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: 56, height: 56, borderRadius: 12, background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-blue)', fontSize: '1.5rem' }}>
+              <div style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--palette-ocean-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-blue)', fontSize: '1.5rem' }}>
                 💧
               </div>
               <div style={{ flex: 1 }}>

@@ -3,7 +3,7 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import dayjs from 'dayjs';
-import { MessageSquare, Phone, CheckCircle, Clock, Send } from 'lucide-react';
+import { MessageSquare, Phone, CheckCircle, Clock } from 'lucide-react';
 import '../styles/reminders.css';
 
 const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
@@ -16,12 +16,12 @@ function buildWhatsAppLink(phone, customerName, orderNumber, pendingAmount, busi
   const msg = encodeURIComponent(
     `Dear *${customerName}*,\n\n` +
     `This is a friendly payment reminder from *${businessName || 'Water Plant'}*.\n\n` +
-    `📦 *Order:* #${orderNumber}\n` +
-    `💰 *Total Amount Due:* ${fmt(pendingAmount)}\n\n` +
-    (upiId ? `💳 *To Pay via UPI:*\nUPI ID: *${upiId}*\nPay Link: ${upiPayLink}\n\n` : '') +
-    `📸 _Please share the screenshot / receipt if payment is done._\n\n` +
+    `*Order:* #${orderNumber}\n` +
+    `*Total Amount Due:* ${fmt(pendingAmount)}\n\n` +
+    (upiId ? `*To Pay via UPI:*\nUPI ID: *${upiId}*\nPay Link: ${upiPayLink}\n\n` : '') +
+    `_Please share the screenshot / receipt if payment is done._\n\n` +
     `Please clear the payment at your earliest convenience.\n` +
-    `Thank you for your business! 🙏`
+    `Thank you for your business!`
   );
   return `https://wa.me/${finalPhone}?text=${msg}`;
 }
@@ -75,8 +75,8 @@ export default function Reminders() {
       </div>
 
       {/* Info Banner */}
-      <div style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <MessageSquare size={20} style={{ color: '#25D366', flexShrink: 0 }} />
+      <div style={{ background: 'var(--palette-ocean-soft)', border: '1px solid rgba(2,119,182,0.16)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <MessageSquare size={20} style={{ color: 'var(--palette-ocean-blue)', flexShrink: 0 }} />
         <div>
           <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.15rem' }}>WhatsApp Reminder System</div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -104,7 +104,7 @@ export default function Reminders() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                     <span style={{ fontWeight: 700, fontSize: '1rem' }}>{order.customer?.name}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-blue)', background: 'rgba(59,130,246,0.1)', padding: '0.15rem 0.5rem', borderRadius: 9999, fontWeight: 600 }}>{order.orderNumber}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-blue)', background: 'var(--palette-ocean-soft)', padding: '0.15rem 0.5rem', borderRadius: 9999, fontWeight: 600 }}>{order.orderNumber}</span>
                     {isSent && (
                       <span style={{ fontSize: '0.7rem', color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
                         <CheckCircle size={12} /> Reminder sent
@@ -156,7 +156,7 @@ export default function Reminders() {
                     onClick={() => markSent(order._id)}
                     style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                   >
-                    <Send size={13} /> Send WhatsApp
+                    <i className="bi bi-whatsapp" aria-hidden="true" /> Send WhatsApp
                   </a>
                   <a
                     href={`tel:${order.customer?.phone}`}

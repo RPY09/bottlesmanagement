@@ -1,16 +1,16 @@
-/* ══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    OCEAN BLUE FINTECH PAYMENTS SYSTEM
    Mobile-First Banking Transaction Cards & SaaS Table
-   ══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .payments-page {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  color: #172033;
+  font-family: 'Arimo', sans-serif;
+  color: var(--text-primary);
   width: 100%;
   max-width: 100%;
 }
 
-/* ─── Header ─── */
+/* â”€â”€â”€ Header â”€â”€â”€ */
 .payments-header {
   display: flex;
   flex-direction: row;
@@ -29,8 +29,8 @@
 
 .payments-title {
   font-size: 1.45rem;
-  font-weight: 800;
-  color: #03045E;
+  font-weight: 700;
+  color: var(--palette-deep-navy);
   letter-spacing: -0.02em;
   margin: 0;
   line-height: 1.2;
@@ -38,7 +38,7 @@
 
 .payments-subtitle {
   font-size: 0.875rem;
-  color: #64748B;
+  color: var(--text-secondary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -47,9 +47,9 @@
 }
 
 .payments-total-pill {
-  color: #15803D;
+  color: var(--status-success-text);
   font-weight: 700;
-  background: #E8F5EC;
+  background: var(--status-success-bg);
   padding: 0.15rem 0.5rem;
   border-radius: 9999px;
   display: inline-flex;
@@ -61,7 +61,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -75,7 +75,7 @@
 }
 
 .payments-btn-record:hover {
-  background: #025E91;
+  background: var(--palette-ocean-hover);
   box-shadow: 0 4px 10px -2px rgba(2, 119, 182, 0.35);
   transform: translateY(-1px);
 }
@@ -84,7 +84,7 @@
   transform: translateY(0);
 }
 
-/* ─── Search & Filters Bar ─── */
+/* â”€â”€â”€ Search & Filters Bar â”€â”€â”€ */
 .payments-filter-bar {
   display: flex;
   align-items: center;
@@ -104,7 +104,7 @@
   left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #94A3B8;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
@@ -113,16 +113,16 @@
   height: 42px;
   padding: 0 2.25rem 0 2.45rem;
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 0.88rem;
-  color: #172033;
+  color: var(--text-primary);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .payments-search-input:focus {
   outline: none;
-  border-color: #0277B6;
+  border-color: var(--palette-ocean-blue);
   box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
 }
 
@@ -133,7 +133,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #94A3B8;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0.25rem;
   display: flex;
@@ -143,8 +143,8 @@
 }
 
 .payments-search-clear:hover {
-  color: #172033;
-  background: #F1F5F9;
+  color: var(--text-primary);
+  background: var(--palette-ice-soft);
 }
 
 .payments-filter-select-wrap {
@@ -155,11 +155,11 @@
   height: 42px;
   padding: 0 2rem 0 0.85rem;
   background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 0.88rem;
   font-weight: 500;
-  color: #172033;
+  color: var(--text-primary);
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -171,7 +171,7 @@
 
 .payments-filter-select:focus {
   outline: none;
-  border-color: #0277B6;
+  border-color: var(--palette-ocean-blue);
   box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
 }
 
@@ -196,27 +196,27 @@
   border-radius: 9999px;
   font-size: 0.78rem;
   font-weight: 600;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   background: #FFFFFF;
-  color: #64748B;
+  color: var(--text-secondary);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
 }
 
 .payments-mode-chip:hover {
-  background: #F8FAFC;
-  color: #172033;
+  background: var(--palette-ice-light);
+  color: var(--text-primary);
 }
 
 .payments-mode-chip.active {
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
-  border-color: #0277B6;
+  border-color: var(--palette-ocean-blue);
   box-shadow: 0 2px 4px rgba(2, 119, 182, 0.2);
 }
 
-/* ─── Mode Badges ─── */
+/* â”€â”€â”€ Mode Badges â”€â”€â”€ */
 .pm-badge {
   display: inline-flex;
   align-items: center;
@@ -238,8 +238,8 @@
 }
 
 .pm-badge-cash {
-  background: #E8F5EC;
-  color: #15803D;
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
 }
 
 .pm-badge-bank {
@@ -248,11 +248,11 @@
 }
 
 .pm-badge-other {
-  background: #F1F5F9;
+  background: var(--palette-ice-soft);
   color: #475569;
 }
 
-/* ─── View Toggling: Desktop Table vs Mobile Cards ─── */
+/* â”€â”€â”€ View Toggling: Desktop Table vs Mobile Cards â”€â”€â”€ */
 .payments-desktop-view {
   display: none;
 }
@@ -274,10 +274,10 @@
   }
 }
 
-/* ─── Desktop Table Styling (1024px+) ─── */
+/* â”€â”€â”€ Desktop Table Styling (1024px+) â”€â”€â”€ */
 .pm-table-wrapper {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   overflow-x: auto;
@@ -293,15 +293,15 @@
 }
 
 .pm-table thead {
-  background: #F8FAFC;
-  border-bottom: 1px solid #E2E8F0;
+  background: var(--palette-ice-light);
+  border-bottom: 1px solid var(--border);
 }
 
 .pm-table th {
   padding: 0.85rem 1.1rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748B;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -317,8 +317,8 @@
 
 .pm-table td {
   padding: 0.95rem 1.1rem;
-  color: #172033;
-  border-bottom: 1px solid #F1F5F9;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--palette-ice-soft);
   vertical-align: middle;
 }
 
@@ -327,7 +327,7 @@
 }
 
 .pm-table tbody tr:hover {
-  background-color: #F8FAFC;
+  background-color: var(--palette-ice-light);
 }
 
 .pm-table tbody tr:last-child td {
@@ -336,25 +336,25 @@
 
 .pm-td-date {
   font-size: 0.82rem;
-  color: #64748B;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .pm-td-customer {
   font-weight: 600;
-  color: #172033;
+  color: var(--text-primary);
 }
 
 .pm-td-order {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #0277B6;
+  color: var(--palette-ocean-blue);
 }
 
 .pm-td-amount {
   text-align: right;
   font-weight: 700;
-  color: #15803D;
+  color: var(--status-success-text);
   font-size: 0.98rem;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -362,13 +362,13 @@
 
 .pm-td-ref {
   font-size: 0.8rem;
-  color: #64748B;
+  color: var(--text-secondary);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .pm-td-notes {
   font-size: 0.82rem;
-  color: #64748B;
+  color: var(--text-secondary);
   max-width: 180px;
   white-space: nowrap;
   overflow: hidden;
@@ -383,7 +383,7 @@
 .pm-table-action-btn {
   background: transparent;
   border: none;
-  color: #94A3B8;
+  color: var(--text-muted);
   padding: 0.4rem;
   border-radius: 8px;
   cursor: pointer;
@@ -394,14 +394,14 @@
 }
 
 .pm-table-action-btn:hover {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
 }
 
-/* ─── Mobile Transaction Card (Banking Style) ─── */
+/* â”€â”€â”€ Mobile Transaction Card (Banking Style) â”€â”€â”€ */
 .pm-card {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
@@ -425,7 +425,7 @@
 }
 
 .pm-card:active {
-  border-color: #CBD5E1;
+  border-color: var(--border);
 }
 
 /* Card Header */
@@ -448,8 +448,8 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #CBF0F8;
-  color: #0277B6;
+  background: var(--palette-ice-blue);
+  color: var(--palette-ocean-blue);
   font-weight: 700;
   font-size: 0.85rem;
   display: flex;
@@ -469,7 +469,7 @@
 .pm-card-customer-name {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #172033;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -479,7 +479,7 @@
 .pm-card-order-id {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #0277B6;
+  color: var(--palette-ocean-blue);
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -496,7 +496,7 @@
   align-items: baseline;
   justify-content: space-between;
   padding: 0.2rem 0;
-  border-bottom: 1px dashed #F1F5F9;
+  border-bottom: 1px dashed var(--palette-ice-soft);
   padding-bottom: 0.6rem;
 }
 
@@ -508,8 +508,8 @@
 
 .pm-card-amount {
   font-size: 1.45rem;
-  font-weight: 800;
-  color: #15803D;
+  font-weight: 700;
+  color: var(--status-success-text);
   letter-spacing: -0.02em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -518,14 +518,14 @@
 .pm-card-amount-label {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #64748B;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .pm-card-date-time {
   font-size: 0.75rem;
-  color: #64748B;
+  color: var(--text-secondary);
   font-weight: 500;
   white-space: nowrap;
   text-align: right;
@@ -536,8 +536,8 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: #F8FAFC;
-  border: 1px solid #F1F5F9;
+  background: var(--palette-ice-light);
+  border: 1px solid var(--palette-ice-soft);
   border-radius: 8px;
   padding: 0.4rem 0.6rem;
   font-size: 0.78rem;
@@ -549,7 +549,7 @@
 
 .pm-card-notes-preview svg {
   flex-shrink: 0;
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 /* Card Footer */
@@ -563,7 +563,7 @@
 .pm-card-details-btn {
   background: none;
   border: none;
-  color: #0277B6;
+  color: var(--palette-ocean-blue);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -583,7 +583,7 @@
 .pm-card-more-btn {
   background: transparent;
   border: none;
-  color: #94A3B8;
+  color: var(--text-muted);
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -596,18 +596,18 @@
 }
 
 .pm-card-more-btn:hover {
-  background: #F1F5F9;
-  color: #172033;
+  background: var(--palette-ice-soft);
+  color: var(--text-primary);
 }
 
-/* ─── More Actions Popover Menu ─── */
+/* â”€â”€â”€ More Actions Popover Menu â”€â”€â”€ */
 .pm-popover-menu {
   position: absolute;
   bottom: 100%;
   right: 0;
   margin-bottom: 0.35rem;
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.08);
   padding: 0.35rem;
@@ -644,19 +644,19 @@
 }
 
 .pm-popover-item.delete {
-  color: #DC2626;
+  color: var(--status-danger-text);
 }
 
 .pm-popover-item.delete:hover {
-  background: #FEE2E2;
+  background: var(--status-danger-bg);
 }
 
 .pm-popover-item.view {
-  color: #172033;
+  color: var(--text-primary);
 }
 
 .pm-popover-item.view:hover {
-  background: #F8FAFC;
+  background: var(--palette-ice-light);
 }
 
 /* Backdrop for popover dismissal */
@@ -667,7 +667,7 @@
   background: transparent;
 }
 
-/* ─── Detail Modal / Bottom Sheet ─── */
+/* â”€â”€â”€ Detail Modal / Bottom Sheet â”€â”€â”€ */
 .pm-detail-overlay {
   position: fixed;
   inset: 0;
@@ -745,17 +745,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--border);
 }
 
 .pm-detail-title {
   font-size: 1.1rem;
-  font-weight: 800;
-  color: #03045E;
+  font-weight: 700;
+  color: var(--palette-deep-navy);
 }
 
 .pm-detail-close-btn {
-  background: #F1F5F9;
+  background: var(--palette-ice-soft);
   border: none;
   width: 32px;
   height: 32px;
@@ -763,14 +763,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748B;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .pm-detail-close-btn:hover {
-  background: #E2E8F0;
-  color: #172033;
+  background: var(--border);
+  color: var(--text-primary);
 }
 
 .pm-detail-content {
@@ -783,8 +783,8 @@
 
 /* Highlight amount card in detail modal */
 .pm-detail-hero {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: var(--palette-ice-light);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.15rem;
   display: flex;
@@ -797,15 +797,15 @@
 .pm-detail-hero-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748B;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .pm-detail-hero-amount {
   font-size: 2rem;
-  font-weight: 800;
-  color: #15803D;
+  font-weight: 700;
+  color: var(--status-success-text);
   letter-spacing: -0.02em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -815,7 +815,7 @@
 .pm-detail-rows {
   display: flex;
   flex-direction: column;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   background: #FFFFFF;
@@ -826,7 +826,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--palette-ice-soft);
   font-size: 0.85rem;
   gap: 0.75rem;
 }
@@ -836,7 +836,7 @@
 }
 
 .pm-detail-row-label {
-  color: #64748B;
+  color: var(--text-secondary);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -844,7 +844,7 @@
 }
 
 .pm-detail-row-value {
-  color: #172033;
+  color: var(--text-primary);
   font-weight: 600;
   text-align: right;
   word-break: break-word;
@@ -856,8 +856,8 @@
 }
 
 .pm-detail-notes-box {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: var(--palette-ice-light);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.85rem;
   font-size: 0.85rem;
@@ -870,14 +870,14 @@
 .pm-detail-notes-label {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #64748B;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .pm-detail-footer {
   padding: 0.85rem 1.25rem;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -889,8 +889,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
   border: none;
   border-radius: 10px;
   padding: 0.65rem 0.95rem;
@@ -902,11 +902,11 @@
 
 .pm-detail-delete-btn:hover {
   background: #FCD34D33;
-  color: #B91C1C;
+  color: var(--status-danger-text);
 }
 
 .pm-detail-done-btn {
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -919,10 +919,10 @@
 }
 
 .pm-detail-done-btn:hover {
-  background: #025E91;
+  background: var(--palette-ocean-hover);
 }
 
-/* ─── Delete Confirmation Modal ─── */
+/* â”€â”€â”€ Delete Confirmation Modal â”€â”€â”€ */
 .pm-delete-modal-overlay {
   position: fixed;
   inset: 0;
@@ -955,8 +955,8 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -964,20 +964,20 @@
 
 .pm-delete-title {
   font-size: 1.15rem;
-  font-weight: 800;
-  color: #172033;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .pm-delete-desc {
   font-size: 0.88rem;
-  color: #64748B;
+  color: var(--text-secondary);
   line-height: 1.45;
   margin: 0;
 }
 
 .pm-delete-highlight {
-  color: #172033;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
@@ -992,9 +992,9 @@
 .pm-delete-btn-cancel {
   flex: 1;
   height: 44px;
-  background: #F1F5F9;
+  background: var(--palette-ice-soft);
   color: #475569;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -1003,14 +1003,14 @@
 }
 
 .pm-delete-btn-cancel:hover {
-  background: #E2E8F0;
-  color: #172033;
+  background: var(--border);
+  color: var(--text-primary);
 }
 
 .pm-delete-btn-confirm {
   flex: 1;
   height: 44px;
-  background: #DC2626;
+  background: var(--status-danger-text);
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -1026,7 +1026,7 @@
 }
 
 .pm-delete-btn-confirm:hover {
-  background: #B91C1C;
+  background: var(--status-danger-text);
 }
 
 .pm-delete-btn-confirm:disabled {
@@ -1034,7 +1034,7 @@
   cursor: not-allowed;
 }
 
-/* ─── Record Payment Modal (Refined Ocean Blue) ─── */
+/* â”€â”€â”€ Record Payment Modal (Refined Ocean Blue) â”€â”€â”€ */
 .pm-record-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1095,7 +1095,7 @@
 .pm-record-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #172033;
+  color: var(--text-primary);
 }
 
 .pm-record-input,
@@ -1103,10 +1103,10 @@
 .pm-record-textarea {
   width: 100%;
   font-size: 16px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.65rem 0.85rem;
-  color: #172033;
+  color: var(--text-primary);
   background: #FFFFFF;
   font-family: inherit;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -1116,7 +1116,7 @@
 .pm-record-select:focus,
 .pm-record-textarea:focus {
   outline: none;
-  border-color: #0277B6;
+  border-color: var(--palette-ocean-blue);
   box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
 }
 
@@ -1132,7 +1132,7 @@
   border-radius: 12px;
   padding: 0.75rem 0.95rem;
   font-size: 0.82rem;
-  color: #172033;
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -1140,7 +1140,7 @@
 
 .pm-record-footer {
   padding: 1rem 1.25rem;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -1151,9 +1151,9 @@
 .pm-record-btn-cancel {
   height: 44px;
   padding: 0 1.25rem;
-  background: #F1F5F9;
+  background: var(--palette-ice-soft);
   color: #475569;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 0.88rem;
   font-weight: 600;
@@ -1162,13 +1162,13 @@
 }
 
 .pm-record-btn-cancel:hover {
-  background: #E2E8F0;
+  background: var(--border);
 }
 
 .pm-record-btn-save {
   height: 44px;
   padding: 0 1.5rem;
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -1184,7 +1184,7 @@
 }
 
 .pm-record-btn-save:hover {
-  background: #025E91;
+  background: var(--palette-ocean-hover);
 }
 
 .pm-record-btn-save:disabled {
@@ -1192,7 +1192,7 @@
   cursor: not-allowed;
 }
 
-/* ─── Empty State ─── */
+/* â”€â”€â”€ Empty State â”€â”€â”€ */
 .pm-empty-state {
   display: flex;
   flex-direction: column;
@@ -1201,7 +1201,7 @@
   text-align: center;
   padding: 3.5rem 1.5rem;
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 16px;
   gap: 0.75rem;
 }
@@ -1210,8 +1210,8 @@
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: #F1F5F9;
-  color: #94A3B8;
+  background: var(--palette-ice-soft);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1220,13 +1220,13 @@
 .pm-empty-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #172033;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .pm-empty-desc {
   font-size: 0.85rem;
-  color: #64748B;
+  color: var(--text-secondary);
   margin: 0;
   max-width: 300px;
 }

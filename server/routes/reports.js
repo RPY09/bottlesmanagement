@@ -145,7 +145,15 @@ router.get('/summary', async (req, res) => {
     // 6. Previous Period Expenses
     Expense.aggregate([
       { $match: { user: userId, date: { $gte: prevStart, $lte: prevEnd } } },
-      { $group: { _id: null, totalExpenses: { $sum: '$amount' } } }
+      {
+        $group: {
+          _id: null,
+          totalExpenses: { $sum: '$amount' },
+          paidExpenses: {
+            $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 0, '$amount'] }
+          }
+        }
+      }
     ]),
 
     // 7. Expense by Category Breakdown
@@ -320,7 +328,10 @@ router.get('/summary', async (req, res) => {
   const prevRevenue = prevOverviewAgg[0]?.totalRevenue || 0;
   const prevCollected = prevPaymentAgg[0]?.totalCollected || 0;
   const prevExpenses = prevExpenseAgg[0]?.totalExpenses || 0;
-  const prevNetCashflow = prevCollected - prevExpenses;
+  const prevPaidExpenses = prevExpenseAgg[0]?.paidExpenses !== undefined
+    ? prevExpenseAgg[0].paidExpenses
+    : prevExpenses;
+  const prevNetCashflow = prevCollected - prevPaidExpenses;
 
   // Percentage shares for products
   const productShare = productPerformance.map(p => ({

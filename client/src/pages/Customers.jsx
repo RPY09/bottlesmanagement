@@ -8,7 +8,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
   Plus, Search, Edit2, Trash2, Phone, MapPin, User,
-  Image, X, MessageCircle, IndianRupee, Package, Clock,
+  Image, X, IndianRupee, Package, Clock,
   Navigation, Crosshair, Check, Copy, ExternalLink,
   ChevronDown, ChevronUp, TrendingUp, CheckCircle2, AlertCircle,
   Calendar, CreditCard, Sparkles, ChevronRight,
@@ -45,7 +45,7 @@ function MapLocationPicker({ initialAddress, onSelect, onClose }) {
     const customPinIcon = L.divIcon({
       className: 'custom-map-pin',
       html: `<div style="transform: translate(-50%, -100%); cursor: grab;">
-        <svg width="34" height="42" viewBox="0 0 24 24" fill="#0277B6" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
+        <svg width="34" height="42" viewBox="0 0 24 24" fill="var(--palette-ocean-blue)" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3" fill="#FFFFFF"></circle>
         </svg>
@@ -350,13 +350,13 @@ function AddressAutocomplete({ value, onChange, onOpenMap }) {
                 onMouseDown={() => pick(s)}
                 className="cm-address-item"
               >
-                <MapPin size={15} style={{ color: '#0277B6', marginTop: 2, flexShrink: 0 }} />
+                <MapPin size={15} style={{ color: 'var(--palette-ocean-blue)', marginTop: 2, flexShrink: 0 }} />
                 <span>{s.display_name}</span>
               </div>
             ))}
 
             {searched && suggestions.length === 0 && (
-              <div style={{ padding: '0.75rem 0.9rem', fontSize: '0.82rem', color: '#64748B' }}>
+              <div style={{ padding: '0.75rem 0.9rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 No address found for "{value}".
               </div>
             )}
@@ -369,10 +369,10 @@ function AddressAutocomplete({ value, onChange, onOpenMap }) {
               }}
               className="cm-address-item"
               style={{
-                background: '#F0F9FF',
-                color: '#0277B6',
+                background: 'var(--palette-ice-light)',
+                color: 'var(--palette-ocean-blue)',
                 fontWeight: 700,
-                borderTop: suggestions.length ? '1px solid #E2E8F0' : 'none',
+                borderTop: suggestions.length ? '1px solid var(--border)' : 'none',
               }}
             >
               <Navigation size={15} style={{ marginTop: 2, flexShrink: 0 }} />
@@ -921,7 +921,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
       .map(o => {
         const due = o.totalAmount - (o.paidAmount || 0);
         const date = dayjs(o.createdAt).format('D MMM YYYY');
-        return `• 🧾 Order ${o.orderNumber} (${date}): ₹${due.toLocaleString('en-IN')} due`;
+        return `- Order ${o.orderNumber} (${date}): ₹${due.toLocaleString('en-IN')} due`;
       })
       .join('\n');
 
@@ -930,14 +930,14 @@ function CustomerDetail({ customer, onClose, onEdit }) {
     const upiPayLink = upiId ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${summary.pending}&cu=INR` : '';
 
     const msg =
-      `👋 Hello *${customer.name}*,\n\n` +
-      `💧 This is a friendly payment reminder from *${businessName}* regarding your pending dues.\n\n` +
-      `📋 *Pending Orders:*\n${orderLines}\n\n` +
-      `💰 *Total Amount to be Paid: ₹${summary.pending.toLocaleString('en-IN')}*\n\n` +
-      (upiId ? `💳 *To Pay via UPI:*\n📲 UPI ID: *${upiId}*\n` + (upiPayLink ? `🔗 Pay Link: ${upiPayLink}\n\n` : '\n') : '') +
-      `📸 _Please share the screenshot / receipt if payment is done._\n\n` +
+      `Hello *${customer.name}*,\n\n` +
+      `This is a friendly payment reminder from *${businessName}* regarding your pending dues.\n\n` +
+      `*Pending Orders:*\n${orderLines}\n\n` +
+      `*Total Amount to be Paid: ₹${summary.pending.toLocaleString('en-IN')}*\n\n` +
+      (upiId ? `*To Pay via UPI:*\nUPI ID: *${upiId}*\n` + (upiPayLink ? `Pay Link: ${upiPayLink}\n\n` : '\n') : '') +
+      `_Please share the screenshot / receipt if payment is done._\n\n` +
       `Please clear the dues at your earliest convenience.\n` +
-      `🙏 Thank you for your business! 💧`;
+      `Thank you for your business!`;
 
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
@@ -955,19 +955,19 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 
     const linesSummary = (o.lines || []).map(l => {
       const bpc = l.bottlesPerCase || 12;
-      return `💧 *${l.productName}* (${l.size || 'Standard'})\n   ↳ ${l.cases} case${l.cases !== 1 ? 's' : ''} × ${bpc} bottles = ${l.cases * bpc} bottles @ ₹${l.pricePerBottle}/bottle`;
+      return `*${l.productName}* (${l.size || 'Standard'})\n   - ${l.cases} case${l.cases !== 1 ? 's' : ''} × ${bpc} bottles = ${l.cases * bpc} bottles @ ₹${l.pricePerBottle}/bottle`;
     }).join('\n\n');
 
     const msg =
-      `👋 Hello *${customer.name}*,\n\n` +
-      `💧 Order payment reminder from *${businessName}*:\n` +
-      `🧾 *Order #${o.orderNumber}* (${dayjs(o.createdAt).format('DD-MM-YYYY')})\n\n` +
-      (linesSummary ? `📦 *Items:*\n${linesSummary}\n\n` : '') +
-      `💰 *Total Amount:* ₹${o.totalAmount?.toLocaleString('en-IN')}\n` +
-      (due > 0 ? `⚠️ *Pending Due: ₹${due.toLocaleString('en-IN')}*\n\n` : `✅ *Status:* Fully Paid\n\n`) +
-      (due > 0 && upiId ? `💳 *To Pay via UPI:*\n📲 UPI ID: *${upiId}*\n` + (upiPayLink ? `🔗 Pay Link: ${upiPayLink}\n\n` : '\n') : '') +
-      `📸 _Please share screenshot / receipt once paid._\n\n` +
-      `🙏 Thank you! 💧`;
+      `Hello *${customer.name}*,\n\n` +
+      `Order payment reminder from *${businessName}*:\n` +
+      `*Order #${o.orderNumber}* (${dayjs(o.createdAt).format('DD-MM-YYYY')})\n\n` +
+      (linesSummary ? `*Items:*\n${linesSummary}\n\n` : '') +
+      `*Total Amount:* ₹${o.totalAmount?.toLocaleString('en-IN')}\n` +
+      (due > 0 ? `*Pending Due: ₹${due.toLocaleString('en-IN')}*\n\n` : `*Status:* Fully Paid\n\n`) +
+      (due > 0 && upiId ? `*To Pay via UPI:*\nUPI ID: *${upiId}*\n` + (upiPayLink ? `Pay Link: ${upiPayLink}\n\n` : '\n') : '') +
+      `_Please share screenshot / receipt once paid._\n\n` +
+      `Thank you!`;
 
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
@@ -1072,7 +1072,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                 aria-label="Send WhatsApp Reminder"
                 onClick={sendWhatsApp}
               >
-                <i class="bi bi-whatsapp"></i>
+                <i className="bi bi-whatsapp" aria-hidden="true"></i>
               </button>
             )}
 
@@ -1134,7 +1134,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
         {loading ? (
           <div style={{ padding: '3.5rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
             <div className="loading-spinner" />
-            <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Loading customer records...</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Loading customer records...</div>
           </div>
         ) : detail ? (
           <div
@@ -1150,7 +1150,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                   <div className="crm-metric-card orders">
                     <div className="crm-metric-header">
                       <span>Total Orders</span>
-                      <Package size={15} style={{ color: '#0277B6' }} />
+                      <Package size={15} style={{ color: 'var(--palette-ocean-blue)' }} />
                     </div>
                     <div className="crm-metric-value">{detail.summary.totalOrders}</div>
                     <span className="crm-metric-sub">Lifetime bookings</span>
@@ -1159,7 +1159,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                   <div className="crm-metric-card billed">
                     <div className="crm-metric-header">
                       <span>Total Billed</span>
-                      <TrendingUp size={15} style={{ color: '#03045E' }} />
+                      <TrendingUp size={15} style={{ color: 'var(--palette-deep-navy)' }} />
                     </div>
                     <div className="crm-metric-value">₹{detail.summary.totalValue.toLocaleString('en-IN')}</div>
                     <span className="crm-metric-sub">Gross order value</span>
@@ -1168,7 +1168,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                   <div className="crm-metric-card received">
                     <div className="crm-metric-header">
                       <span>Total Received</span>
-                      <CheckCircle2 size={15} style={{ color: '#15803D' }} />
+                      <CheckCircle2 size={15} style={{ color: 'var(--status-success-text)' }} />
                     </div>
                     <div className="crm-metric-value">₹{detail.summary.totalPaid.toLocaleString('en-IN')}</div>
                     <span className="crm-metric-sub">Cleared payments</span>
@@ -1176,17 +1176,17 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 
                   <div className={`crm-metric-card ${pendingAmount > 0 ? 'pending' : 'settled'}`}>
                     <div className="crm-metric-header">
-                      <span>Pending Balance</span>
+                      <span>Pending Bal</span>
                       {pendingAmount > 0 ? (
-                        <AlertCircle size={15} style={{ color: '#DC2626' }} />
+                        <AlertCircle size={15} style={{ color: 'var(--status-danger-text)' }} />
                       ) : (
-                        <Sparkles size={15} style={{ color: '#15803D' }} />
+                        <Sparkles size={15} style={{ color: 'var(--status-success-text)' }} />
                       )}
                     </div>
-                    <div className="crm-metric-value" style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D' }}>
+                    <div className="crm-metric-value" style={{ color: pendingAmount > 0 ? 'var(--status-danger-text)' : 'var(--status-success-text)' }}>
                       ₹{pendingAmount.toLocaleString('en-IN')}
                     </div>
-                    <span className="crm-metric-sub" style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D', fontWeight: 600 }}>
+                    <span className="crm-metric-sub" style={{ color: pendingAmount > 0 ? 'var(--status-danger-text)' : 'var(--status-success-text)', fontWeight: 600 }}>
                       {pendingAmount > 0 ? 'Dues Outstanding' : 'All Settled'}
                     </span>
                   </div>
@@ -1195,7 +1195,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                 {/* Financial Overview Card */}
                 <div className="crm-overview-card">
                   <div className="crm-overview-title">
-                    <CreditCard size={16} style={{ color: '#0277B6' }} />
+                    <CreditCard size={16} style={{ color: 'var(--palette-ocean-blue)' }} />
                     <span>Financial Overview</span>
                   </div>
 
@@ -1213,18 +1213,18 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 
                   <div className="crm-overview-row">
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#15803D' }} />
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--status-success-text)' }} />
                       Payments Received ({receivedPercent}%)
                     </span>
-                    <strong style={{ color: '#15803D' }}>₹{detail.summary.totalPaid.toLocaleString('en-IN')}</strong>
+                    <strong style={{ color: 'var(--status-success-text)' }}>₹{detail.summary.totalPaid.toLocaleString('en-IN')}</strong>
                   </div>
 
                   <div className="crm-overview-row">
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: pendingAmount > 0 ? '#DC2626' : '#15803D' }} />
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: pendingAmount > 0 ? 'var(--status-danger-text)' : 'var(--status-success-text)' }} />
                       Outstanding Balance
                     </span>
-                    <strong style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D' }}>
+                    <strong style={{ color: pendingAmount > 0 ? 'var(--status-danger-text)' : 'var(--status-success-text)' }}>
                       ₹{pendingAmount.toLocaleString('en-IN')}
                     </strong>
                   </div>
@@ -1234,7 +1234,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                 <div className="crm-recent-section">
                   <div className="crm-recent-header">
                     <span className="crm-recent-title">
-                      <Clock size={15} style={{ color: '#0277B6' }} />
+                      <Clock size={15} style={{ color: 'var(--palette-ocean-blue)' }} />
                       Recent Orders
                     </span>
                     {allOrders.length > 0 && (
@@ -1263,19 +1263,19 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                             }}
                           >
                             <div>
-                              <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#03045E' }}>
+                              <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--palette-deep-navy)' }}>
                                 #{o.orderNumber}
                               </div>
-                              <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                                 {dayjs(o.createdAt).format('DD MMM YYYY · HH:mm')}
                               </div>
                             </div>
 
                             <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0277B6' }}>
+                              <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--palette-ocean-blue)' }}>
                                 ₹{o.totalAmount.toLocaleString('en-IN')}
                               </div>
-                              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: isPaid ? '#15803D' : '#DC2626' }}>
+                              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: isPaid ? 'var(--status-success-text)' : 'var(--status-danger-text)' }}>
                                 {isPaid ? 'Paid' : `Due: ₹${due.toLocaleString('en-IN')}`}
                               </div>
                             </div>
@@ -1284,7 +1284,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                       })}
                     </div>
                   ) : (
-                    <div style={{ padding: '1.25rem', textAlign: 'center', background: '#F8FAFC', borderRadius: 10, border: '1px dashed #E2E8F0', fontSize: '0.8rem', color: '#64748B' }}>
+                    <div style={{ padding: '1.25rem', textAlign: 'center', background: '#F8FAFC', borderRadius: 10, border: '1px dashed var(--border)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                       No orders recorded yet
                     </div>
                   )}
@@ -1292,15 +1292,15 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 
                 {/* Customer Address & Notes details */}
                 {(customer.address || customer.notes) && (
-                  <div style={{ padding: '0.75rem 0.95rem', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <div style={{ padding: '0.75rem 0.95rem', background: '#F8FAFC', borderRadius: 12, border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {customer.address && (
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', fontSize: '0.78rem', color: '#172033' }}>
-                        <MapPin size={14} style={{ color: '#0277B6', flexShrink: 0, marginTop: 2 }} />
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', fontSize: '0.78rem', color: 'var(--text-primary)' }}>
+                        <MapPin size={14} style={{ color: 'var(--palette-ocean-blue)', flexShrink: 0, marginTop: 2 }} />
                         <span>{customer.address}</span>
                       </div>
                     )}
                     {customer.notes && (
-                      <div style={{ fontSize: '0.74rem', color: '#64748B', fontStyle: 'italic', paddingTop: '0.35rem', borderTop: '1px dashed #E2E8F0' }}>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontStyle: 'italic', paddingTop: '0.35rem', borderTop: '1px dashed var(--border)' }}>
                         Note: {customer.notes}
                       </div>
                     )}
@@ -1338,7 +1338,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                 </div>
 
                 {visibleOrders.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: '#F8FAFC', borderRadius: 14, border: '1px dashed #E2E8F0', color: '#64748B', fontSize: '0.85rem' }}>
+                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: '#F8FAFC', borderRadius: 14, border: '1px dashed var(--border)', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                     {orderFilter === 'all' ? 'No orders recorded yet' : `No ${orderFilter} orders found`}
                   </div>
                 ) : (
@@ -1374,7 +1374,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                             {/* Summary row */}
                             <div className="crm-order-summary-row">
                               <span className="crm-order-summary-pill">
-                                <Package size={13} style={{ color: '#0277B6' }} />
+                                <Package size={13} style={{ color: 'var(--palette-ocean-blue)' }} />
                                 {totalCases} Cases ({totalBottles} Btls)
                               </span>
                             </div>
@@ -1409,7 +1409,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                                   }}
                                   title="Send payment reminder via WhatsApp"
                                 >
-                                  <MessageCircle size={13} /> Send Reminder
+                                  <i className="bi bi-whatsapp" aria-hidden="true" /> Send Reminder
                                 </button>
                               ) : <span />}
 
@@ -1427,7 +1427,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
                           {/* 3. Inline Expandable Line Items breakdown */}
                           {isExpanded && lines.length > 0 && (
                             <div className="crm-order-items-breakdown">
-                              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#03045E', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--palette-deep-navy)', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
                                 Order Items Breakdown:
                               </div>
                               {lines.map((l, idx) => {
@@ -1475,6 +1475,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -1533,26 +1534,29 @@ export default function Customers() {
   };
 
   const handleDelete = async (id) => {
+    if (deletingId) return;
     if (!window.confirm('Delete this customer?')) return;
+    setDeletingId(id);
     try {
       await api.delete(`/customers/${id}`);
       setCustomers(prev => prev.filter(c => c._id !== id));
       if (detail?._id === id) setDetail(null);
       toast.success('Customer deleted');
     } catch { toast.error('Failed to delete'); }
+    finally { setDeletingId(null); }
   };
 
   // Generate a consistent gradient color from name initials
   const getAvatarGradient = (name = '') => {
     const gradients = [
-      ['#0277B6', '#48CBE4'],
-      ['#7c3aed', '#a78bfa'],
-      ['#059669', '#34d399'],
-      ['#dc2626', '#f87171'],
-      ['#d97706', '#fbbf24'],
-      ['#0369a1', '#38bdf8'],
-      ['#be185d', '#f472b6'],
-      ['#065f46', '#6ee7b7'],
+      ['var(--palette-ocean-blue)', 'var(--palette-sky-blue)'],
+      ['var(--accent-purple)', 'var(--palette-sky-blue)'],
+      ['var(--status-success-text)', 'var(--palette-sky-blue)'],
+      ['var(--status-danger-text)', 'var(--status-danger-bg)'],
+      ['var(--status-warning-text)', 'var(--status-warning-bg)'],
+      ['var(--palette-ocean-hover)', 'var(--palette-sky-blue)'],
+      ['var(--palette-deep-navy)', 'var(--palette-ice-blue)'],
+      ['var(--status-success-text)', 'var(--status-success-bg)'],
     ];
     const idx = name.charCodeAt(0) % gradients.length;
     return gradients[idx];
@@ -1734,6 +1738,7 @@ export default function Customers() {
                           type="button"
                           className="customer-card-action-btn danger"
                           onClick={() => handleDelete(c._id)}
+                          disabled={Boolean(deletingId)}
                           title="Delete customer"
                           aria-label={`Delete ${c.name}`}
                         >

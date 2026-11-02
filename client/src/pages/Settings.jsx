@@ -306,7 +306,7 @@ export default function Settings() {
               </p>
             </div>
           </div>
-          <span className="set-size-badge" style={{ background: '#E8F5EC', color: '#15803D' }}>
+          <span className="set-size-badge" style={{ background: 'var(--status-success-bg)', color: 'var(--status-success-text)' }}>
             {products.length} Product{products.length !== 1 ? 's' : ''}
           </span>
         </div>
@@ -484,9 +484,9 @@ export default function Settings() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#64748B' }}>
-            <Package size={32} style={{ color: '#94A3B8', marginBottom: 6 }} />
-            <div style={{ fontWeight: 700, color: '#03045E' }}>No products configured yet</div>
+          <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-secondary)' }}>
+            <Package size={32} style={{ color: 'var(--text-muted)', marginBottom: 6 }} />
+            <div style={{ fontWeight: 700, color: 'var(--palette-deep-navy)' }}>No products configured yet</div>
             <p style={{ fontSize: '0.82rem', margin: '4px 0 0' }}>
               Add your first bottle size above to enable order creation and invoicing.
             </p>
@@ -517,11 +517,11 @@ export default function Settings() {
 
                       return (
                         <tr key={p._id} className={isArchived ? 'archived' : ''}>
-                          <td style={{ fontWeight: 700, color: '#03045E' }}>{p.name}</td>
+                          <td style={{ fontWeight: 700, color: 'var(--palette-deep-navy)' }}>{p.name}</td>
                           <td><span className="set-size-badge">{p.size}</span></td>
                           <td>{caseQty} bottles/case</td>
                           <td className="right" style={{ fontWeight: 600 }}>{fmt(unitPrice)}</td>
-                          <td className="right" style={{ fontWeight: 800, color: '#15803D' }}>
+                          <td className="right" style={{ fontWeight: 800, color: 'var(--status-success-text)' }}>
                             {fmt(caseTotal)}
                           </td>
                           <td>
@@ -587,7 +587,7 @@ export default function Settings() {
                       </div>
 
                       <div className="set-prod-card-price">
-                        {fmt(unitPrice)} <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 500 }}>/ bottle</span>
+                        {fmt(unitPrice)} <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>/ bottle</span>
                       </div>
 
                       <div className="set-prod-card-meta">

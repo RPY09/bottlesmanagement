@@ -7,7 +7,7 @@ import { CustomerModal } from './Customers';
 import '../styles/orders.css';
 import {
   Search, Edit2, Trash2, ShoppingCart,
-  IndianRupee, X, Send, Clock, Calendar, TrendingUp,
+  IndianRupee, X, Clock, Calendar, TrendingUp,
   ChevronDown, ChevronUp, Filter, MoreVertical, CheckCircle2, AlertCircle,
   Plus, FileText, CreditCard, Loader2, Check,
   User, UserPlus, Package, Droplets
@@ -73,7 +73,7 @@ export function WhatsAppModal({ order, upiId, businessName, onClose }) {
 
   const linesSummary = (order.lines || []).map(l => {
     const bpc = l.bottlesPerCase || 12;
-    return `💧 *${l.productName}* (${l.size})\n   ↳ ${l.cases} case${l.cases !== 1 ? 's' : ''} × ${bpc} bottles = ${l.cases * bpc} bottles @ ₹${l.pricePerBottle}/bottle`;
+    return `*${l.productName}* (${l.size})\n   - ${l.cases} case${l.cases !== 1 ? 's' : ''} × ${bpc} bottles = ${l.cases * bpc} bottles @ ₹${l.pricePerBottle}/bottle`;
   }).join('\n\n');
 
   const totalCases = (order.lines || []).reduce((s, l) => s + (l.cases || 0), 0);
@@ -83,17 +83,17 @@ export function WhatsAppModal({ order, upiId, businessName, onClose }) {
   const upiPayLink = upiId ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName || 'Water Plant')}&am=${order.totalAmount}&cu=INR` : '';
 
   const messageText =
-    `👋 Hello *${customer.name || 'Customer'}*,\n\n` +
-    `✅ Your order *#${order.orderNumber}* has been placed successfully!\n\n` +
-    `📦 *Order Details:*\n${linesSummary}\n\n` +
-    `📊 *Total Quantity:* ${totalCases} cases (${totalBottles} bottles)\n` +
-    `💰 *Total Amount:* ₹${order.totalAmount?.toLocaleString('en-IN')}\n\n` +
-    `🚚 *Delivery Address:*\nSoon to be delivered to your address:\n📍 _${address}_\n\n` +
-    `💳 *To Pay via UPI:*\n` +
-    `📲 UPI ID: *${effectiveUpi}*\n` +
-    (upiId ? `🔗 Pay Link: ${upiPayLink}\n\n` : '\n') +
-    `📸 _Please share the screenshot / receipt if payment is done._\n\n` +
-    `🙏 Thank you for choosing *${businessName || 'Water Plant'}*! 💧`;
+    `Hello *${customer.name || 'Customer'}*,\n\n` +
+    `Your order *#${order.orderNumber}* has been placed successfully!\n\n` +
+    `*Order Details:*\n${linesSummary}\n\n` +
+    `*Total Quantity:* ${totalCases} cases (${totalBottles} bottles)\n` +
+    `*Total Amount:* ₹${order.totalAmount?.toLocaleString('en-IN')}\n\n` +
+    `*Delivery Address:*\nSoon to be delivered to your address:\n_${address}_\n\n` +
+    `*To Pay via UPI:*\n` +
+    `UPI ID: *${effectiveUpi}*\n` +
+    (upiId ? `Pay Link: ${upiPayLink}\n\n` : '\n') +
+    `_Please share the screenshot / receipt if payment is done._\n\n` +
+    `Thank you for choosing *${businessName || 'Water Plant'}*!`;
 
   const handleSendWhatsApp = () => {
     if (!phone) {
@@ -112,7 +112,7 @@ export function WhatsAppModal({ order, upiId, businessName, onClose }) {
 
         <div className="modal-header" style={{ padding: '1.25rem 1.4rem 0.5rem', marginBottom: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: 38, height: 38, borderRadius: 12, background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 10px rgba(37,211,102,0.3)', fontSize: '1.25rem' }}>
+            <div style={{ width: 38, height: 38, borderRadius: 12, background: 'var(--palette-ocean-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 10px rgba(37,211,102,0.3)', fontSize: '1.25rem' }}>
               <i className="bi bi-whatsapp" />
             </div>
             <div>
@@ -158,7 +158,7 @@ export function WhatsAppModal({ order, upiId, businessName, onClose }) {
             disabled={!phone}
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
           >
-            <Send size={15} /> Send on WhatsApp
+            <i className="bi bi-whatsapp" aria-hidden="true" /> Send on WhatsApp
           </button>
         </div>
       </div>
@@ -225,6 +225,7 @@ function QuickPaymentModal({ order, onClose, onPaid }) {
 
   const handleConfirm = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (errorMsg) return toast.error(errorMsg);
 
     setLoading(true);
@@ -311,7 +312,7 @@ function QuickPaymentModal({ order, onClose, onPaid }) {
               </div>
               <div className="pm-success-row">
                 <span>Order ID</span>
-                <span style={{ color: '#0277B6' }}>#{order.orderNumber}</span>
+                <span style={{ color: 'var(--palette-ocean-blue)' }}>#{order.orderNumber}</span>
               </div>
               <div className="pm-success-row">
                 <span>Payment Method</span>
@@ -323,9 +324,9 @@ function QuickPaymentModal({ order, onClose, onPaid }) {
                   <span>{successData.reference}</span>
                 </div>
               )}
-              <div className="pm-success-row" style={{ paddingTop: '0.4rem', borderTop: '1px dashed #E2E8F0' }}>
+              <div className="pm-success-row" style={{ paddingTop: '0.4rem', borderTop: '1px dashed var(--border)' }}>
                 <span>Remaining Balance</span>
-                <span style={{ color: successData.remainingDue === 0 ? '#15803D' : '#0277B6', fontWeight: 800 }}>
+                <span style={{ color: successData.remainingDue === 0 ? 'var(--status-success-text)' : 'var(--palette-ocean-blue)', fontWeight: 800 }}>
                   {successData.remainingDue === 0 ? 'Fully Settled (₹0)' : `₹${successData.remainingDue.toLocaleString('en-IN')}`}
                 </span>
               </div>
@@ -449,7 +450,7 @@ function QuickPaymentModal({ order, onClose, onPaid }) {
                     </div> */}
                     <div className="pm-live-balance-item">
                       <span>Paying:</span>
-                      <strong style={{ color: '#0277B6' }}>₹{parsedAmount.toLocaleString('en-IN')}</strong>
+                      <strong style={{ color: 'var(--palette-ocean-blue)' }}>₹{parsedAmount.toLocaleString('en-IN')}</strong>
                     </div>
                     <div className={`pm-live-balance-item remaining ${remainingDue === 0 ? 'settled' : ''}`}>
                       <span>Remaining:</span>
@@ -654,9 +655,9 @@ function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose,
             })
           ) : !loading ? (
             <div className="om-nested-empty">
-              <User size={34} style={{ color: '#94A3B8' }} />
-              <div style={{ fontWeight: 700, color: '#172033', marginTop: '0.4rem' }}>No customers found</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+              <User size={34} style={{ color: 'var(--text-muted)' }} />
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem' }}>No customers found</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                 No customer matching "{search}"
               </div>
               <button
@@ -778,9 +779,9 @@ function ProductSelectSheet({ products, currentLines, onAdd, onClose }) {
             })
           ) : (
             <div className="om-nested-empty">
-              <Package size={34} style={{ color: '#94A3B8' }} />
-              <div style={{ fontWeight: 700, color: '#172033', marginTop: '0.4rem' }}>No products found</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+              <Package size={34} style={{ color: 'var(--text-muted)' }} />
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem' }}>No products found</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                 No catalogue item matching "{search}"
               </div>
             </div>
@@ -967,6 +968,7 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (!form.customer) return toast.error('Please select a customer');
     if (!activeLines.length) return toast.error('Please enter at least 1 case for any product');
 
@@ -1035,7 +1037,7 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
                 <div id="order-modal-heading" className="om-title">
                   {isEdit ? `Edit Order #${order.orderNumber}` : 'Create New Order'}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
                   {isEdit ? 'Update items, quantities & rates' : 'Select customer and add products'}
                 </div>
               </div>
@@ -1077,8 +1079,8 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
                       </>
                     ) : (
                       <>
-                        <div className="om-cust-trigger-name" style={{ color: '#0277B6' }}>Select a Customer *</div>
-                        <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Tap to search directory</div>
+                        <div className="om-cust-trigger-name" style={{ color: 'var(--palette-ocean-blue)' }}>Select a Customer *</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Tap to search directory</div>
                       </>
                     )}
                   </div>
@@ -1206,11 +1208,11 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
                   })
                 ) : (
                   <div className="om-products-empty">
-                    <Package size={30} style={{ color: '#94A3B8' }} />
-                    <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#172033' }}>
+                    <Package size={30} style={{ color: 'var(--text-muted)' }} />
+                    <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                       No products added yet
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                       Click below to choose items from the catalogue
                     </div>
                     <button
@@ -1244,7 +1246,7 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
                     {!form.notes && (
                       <button
                         type="button"
-                        style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.72rem', cursor: 'pointer', padding: 0 }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.72rem', cursor: 'pointer', padding: 0 }}
                         onClick={() => setShowNotes(false)}
                       >
                         Hide
@@ -1265,7 +1267,7 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
             {/* ══════════════════════════════════════════════════════
                 3. BOTTOM: FIXED FINANCIAL SUMMARY & SUBMIT ACTIONS
                ══════════════════════════════════════════════════════ */}
-            <div style={{ borderTop: '1px solid #E2E8F0', background: '#FFFFFF', padding: '0.65rem 1.25rem', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+            <div style={{ borderTop: '1px solid var(--border)', background: '#FFFFFF', padding: '0.65rem 1.25rem', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
               {/* 4-Metric Financial Summary */}
               <div className="om-summary-panel">
                 <div className="om-summary-metric">
@@ -1293,7 +1295,7 @@ export function OrderModal({ order, customers, products, onClose, onSave }) {
                   onClick={() => setForm(prev => ({ ...prev, markPaid: !prev.markPaid }))}
                 >
                   <div className="om-payment-title">
-                    <CreditCard size={15} style={{ color: '#0277B6' }} />
+                    <CreditCard size={15} style={{ color: 'var(--palette-ocean-blue)' }} />
                     <span>Collect payment now</span>
                   </div>
                   <button
@@ -1394,6 +1396,7 @@ export default function Orders() {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
   const [modal, setModal] = useState(null); // 'new' or order object for edit
   const [payModal, setPayModal] = useState(null); // order object for quick payment
   const [whatsappOrder, setWhatsappOrder] = useState(null); // order object for WhatsApp confirmation
@@ -1580,13 +1583,17 @@ export default function Orders() {
   };
 
   const handleDelete = async (id) => {
+    if (deletingId) return;
     if (!window.confirm('Delete this order?')) return;
+    setDeletingId(id);
     try {
       await api.delete(`/orders/${id}`);
       setOrders(prev => prev.filter(o => o._id !== id));
       toast.success('Order deleted');
     } catch {
       toast.error('Failed to delete');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -1926,6 +1933,7 @@ export default function Orders() {
                           <button
                             className="dt-icon-btn del-btn"
                             onClick={() => handleDelete(o._id)}
+                            disabled={Boolean(deletingId)}
                             title="Delete Order"
                           >
                             <Trash2 size={14} />
@@ -2187,7 +2195,7 @@ export default function Orders() {
             })}
 
             {!filtered.length && (
-              <div className="empty-state" style={{ background: '#FFFFFF', borderRadius: 16, border: '1px solid #E2E8F0' }}>
+              <div className="empty-state" style={{ background: '#FFFFFF', borderRadius: 16, border: '1px solid var(--border)' }}>
                 <ShoppingCart size={40} />
                 <h3>No orders found</h3>
                 <p>No orders match your search or filter</p>

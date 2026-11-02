@@ -20,7 +20,6 @@ import {
   X,
   UserPlus,
   PackagePlus,
-  Clock,
   Sparkles,
 } from 'lucide-react';
 import api from '../api/axios';
@@ -38,8 +37,8 @@ const mainNavItems = [
   { label: 'Payments', icon: Wallet, to: '/payments' },
   { label: 'Expenses', icon: Receipt, to: '/expenses' },
   { label: 'Reports', icon: BarChart3, to: '/reports' },
-  { label: 'Reminders', icon: Clock, to: '/reminders' },
 ];
+const bottomNavPaths = ['/', '/customers', '/orders', '/expenses'];
 
 /* Configurable threshold for double-tap detection (ms) */
 const DOUBLE_TAP_THRESHOLD = 300;
@@ -248,7 +247,6 @@ export default function Layout() {
     { label: 'Payments', category: 'Navigation', icon: Wallet, action: () => { setPaletteOpen(false); navigate('/payments'); } },
     { label: 'Expenses', category: 'Navigation', icon: Receipt, action: () => { setPaletteOpen(false); navigate('/expenses'); } },
     { label: 'Reports', category: 'Navigation', icon: BarChart3, action: () => { setPaletteOpen(false); navigate('/reports'); } },
-    { label: 'Reminders', category: 'Navigation', icon: Clock, action: () => { setPaletteOpen(false); navigate('/reminders'); } },
     { label: 'Settings & Profile', category: 'Navigation', icon: Settings, action: () => { setPaletteOpen(false); navigate('/settings'); } },
   ].filter((item) => item.label.toLowerCase().includes(paletteQuery.toLowerCase()));
 
@@ -286,7 +284,7 @@ export default function Layout() {
         {/* Main Menu Links */}
         <nav className="hbm-sidebar-nav">
           <div className="hbm-nav-section-title">Main Menu</div>
-          {mainNavItems.map(({ label, icon: Icon, to }) => (
+          {mainNavItems.filter(({ to }) => !bottomNavPaths.includes(to)).map(({ label, icon: Icon, to }) => (
             <NavLink
               key={to}
               to={to}
@@ -393,7 +391,7 @@ export default function Layout() {
                   <div className="hbm-notif-menu">
                     <div className="hbm-notif-header">
                       <span>Notifications</span>
-                      <Sparkles size={14} color="#0277B6" />
+                      <Sparkles size={14} color="var(--palette-ocean-blue)" />
                     </div>
                     <div className="hbm-notif-list">
                       <div
@@ -403,8 +401,8 @@ export default function Layout() {
                           navigate('/orders?status=unpaid');
                         }}
                       >
-                        <div style={{ fontWeight: 700, color: '#03045E' }}>Pending Collections</div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--palette-deep-navy)' }}>Pending Collections</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                           Check unpaid orders to record incoming payments.
                         </div>
                       </div>
@@ -415,8 +413,8 @@ export default function Layout() {
                           navigate('/reminders');
                         }}
                       >
-                        <div style={{ fontWeight: 700, color: '#03045E' }}>WhatsApp Reminders</div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--palette-deep-navy)' }}>WhatsApp Reminders</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                           Send 1-click reminders to customers with dues.
                         </div>
                       </div>
@@ -541,17 +539,17 @@ export default function Layout() {
             <span className="hbm-bottom-label">Orders</span>
           </NavLink>
 
-          {/* 5. Payments */}
+          {/* 5. Expenses */}
           <NavLink
-            to="/payments"
+            to="/expenses"
             className={({ isActive }) => `hbm-bottom-item${isActive ? ' active' : ''}`}
-            title="Payments"
+            title="Expenses"
           >
             <span className="hbm-bottom-active-indicator" />
             <div className="hbm-bottom-icon">
-              <Wallet />
+              <Receipt />
             </div>
-            <span className="hbm-bottom-label">Payments</span>
+            <span className="hbm-bottom-label">Expenses</span>
           </NavLink>
         </nav>
       </div>
@@ -573,7 +571,7 @@ export default function Layout() {
               <button
                 type="button"
                 onClick={() => setSpeedDialOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <X size={16} />
               </button>
@@ -645,10 +643,10 @@ export default function Layout() {
               <div className="hbm-drawer-user-box">
                 <div className="hbm-user-avatar">{initials}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#172033' }} className="truncate">
+                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }} className="truncate">
                     {user?.name || 'Admin'}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#0277B6' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--palette-ocean-blue)' }}>
                     {user?.businessName || 'Hydro Business'}
                   </div>
                 </div>
@@ -708,7 +706,7 @@ export default function Layout() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="hbm-palette-search-bar">
-              <Search size={18} color="#0277B6" />
+              <Search size={18} color="var(--palette-ocean-blue)" />
               <input
                 className="hbm-palette-input"
                 placeholder="Search actions or navigate anywhere..."
@@ -719,7 +717,7 @@ export default function Layout() {
               <button
                 type="button"
                 onClick={() => setPaletteOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -745,7 +743,7 @@ export default function Layout() {
               })}
 
               {!paletteItems.length && (
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.85rem' }}>
+                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                   No results found for &quot;{paletteQuery}&quot;
                 </div>
               )}

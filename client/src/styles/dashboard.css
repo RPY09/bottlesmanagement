@@ -1,9 +1,9 @@
-/* ═══════════════════════════════════════════════════════════════════
-   DASHBOARD — Ocean Blue Premium BI Design System
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   DASHBOARD â€” Ocean Blue Premium BI Design System
    Prefix: .dash-*
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ── Layout container ───────────────────────────────────────────── */
+/* â”€â”€ Layout container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-container {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   max-width: 100%;
 }
 
-/* ── 1. Header ──────────────────────────────────────────────────── */
+/* â”€â”€ 1. Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-header {
   display: flex;
   align-items: center;
@@ -20,7 +20,7 @@
 }
 .dash-greeting-title {
   font-size: 1.45rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -52,6 +52,103 @@
   background: var(--palette-ocean-soft);
   border-color: var(--palette-sky-blue);
 }
+.dash-notifications-wrap {
+  position: relative;
+}
+.dash-notifications-popover {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  width: min(330px, calc(100vw - 2rem));
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+  overflow: hidden;
+}
+.dash-notifications-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+.dash-notifications-header strong,
+.dash-notifications-header span {
+  display: block;
+}
+.dash-notifications-header strong {
+  color: var(--palette-deep-navy);
+  font-size: 0.85rem;
+}
+.dash-notifications-header span {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  margin-top: 0.18rem;
+}
+.dash-notifications-header button {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.dash-notifications-list {
+  padding: 0.35rem 0;
+}
+.dash-notification-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.dash-notification-row:hover {
+  background: var(--palette-ocean-soft);
+}
+.dash-notification-row strong,
+.dash-notification-row small {
+  display: block;
+}
+.dash-notification-row strong {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+}
+.dash-notification-row small {
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  margin-top: 0.12rem;
+}
+.dash-notification-row b {
+  color: var(--accent-red);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.dash-notifications-empty {
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+.dash-notifications-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--border-light);
+  color: var(--palette-ocean-blue);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+}
 .dash-bell-dot {
   position: absolute;
   top: 9px;
@@ -63,7 +160,7 @@
   border: 1.5px solid var(--bg-card);
 }
 
-/* ── 2. Period selector ─────────────────────────────────────────── */
+/* â”€â”€ 2. Period selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-period-wrap {
   display: flex;
   flex-direction: column;
@@ -148,7 +245,7 @@
 }
 .dash-apply-btn:hover { background: var(--palette-ocean-hover); }
 
-/* ── 3. KPI Cards grid ──────────────────────────────────────────── */
+/* â”€â”€ 3. KPI Cards grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-kpi-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -176,10 +273,10 @@
   border-radius: 0 14px 0 60px;
   opacity: 0.06;
 }
-.dash-kpi-card.blue::before  { background: #0277B6; }
-.dash-kpi-card.green::before { background: #15803D; }
-.dash-kpi-card.red::before   { background: #DC2626; }
-.dash-kpi-card.orange::before { background: #D97706; }
+.dash-kpi-card.blue::before  { background: var(--palette-ocean-blue); }
+.dash-kpi-card.green::before { background: var(--status-success-text); }
+.dash-kpi-card.red::before   { background: var(--status-danger-text); }
+.dash-kpi-card.orange::before { background: var(--palette-sky-blue); }
 
 .dash-kpi-card:hover {
   transform: translateY(-2px);
@@ -191,6 +288,13 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.6rem;
+  gap: 0.5rem;
+}
+.dash-kpi-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
 }
 .dash-kpi-icon {
   width: 32px;
@@ -201,22 +305,23 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.dash-kpi-card.blue  .dash-kpi-icon { background: rgba(2,119,182,0.12); color: #0277B6; }
-.dash-kpi-card.green .dash-kpi-icon { background: rgba(21,128,61,0.12); color: #15803D; }
-.dash-kpi-card.red   .dash-kpi-icon { background: rgba(220,38,38,0.12); color: #DC2626; }
-.dash-kpi-card.orange .dash-kpi-icon { background: rgba(217,119,6,0.12); color: #D97706; }
+.dash-kpi-card.blue  .dash-kpi-icon { background: rgba(2,119,182,0.12); color: var(--palette-ocean-blue); }
+.dash-kpi-card.green .dash-kpi-icon { background: rgba(21,128,61,0.12); color: var(--status-success-text); }
+.dash-kpi-card.red   .dash-kpi-icon { background: rgba(220,38,38,0.12); color: var(--status-danger-text); }
+.dash-kpi-card.orange .dash-kpi-icon { background: var(--palette-ocean-soft); color: var(--palette-ocean-blue); }
 
 .dash-kpi-label {
   font-size: 0.73rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 0.18rem;
+  margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  line-height: 1;
 }
 .dash-kpi-value {
   font-size: 1.3rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -236,8 +341,8 @@
   padding: 0.18rem 0.45rem;
   border-radius: 999px;
 }
-.dash-kpi-status.danger { background: rgba(220,38,38,0.10); color: #DC2626; }
-.dash-kpi-status.ok     { background: rgba(21,128,61,0.10); color: #15803D; }
+.dash-kpi-status.danger { background: rgba(220,38,38,0.10); color: var(--status-danger-text); }
+.dash-kpi-status.ok     { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
 
 /* Delta badge (period-over-period change) */
 .dash-delta-badge {
@@ -249,10 +354,10 @@
   padding: 0.18rem 0.4rem;
   border-radius: 999px;
 }
-.dash-delta-badge.pos { background: rgba(21,128,61,0.10); color: #15803D; }
-.dash-delta-badge.neg { background: rgba(220,38,38,0.10); color: #DC2626; }
+.dash-delta-badge.pos { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
+.dash-delta-badge.neg { background: rgba(220,38,38,0.10); color: var(--status-danger-text); }
 
-/* ── 4. Net Cashflow card ───────────────────────────────────────── */
+/* â”€â”€ 4. Net Cashflow card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-cashflow-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -270,8 +375,8 @@
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-.dash-cashflow-card.positive { border-left: 3.5px solid #15803D; }
-.dash-cashflow-card.negative { border-left: 3.5px solid #DC2626; }
+.dash-cashflow-card.positive { border-left: 3.5px solid var(--status-success-text); }
+.dash-cashflow-card.negative { border-left: 3.5px solid var(--status-danger-text); }
 .dash-cashflow-left {
   display: flex;
   align-items: center;
@@ -286,8 +391,8 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.dash-cashflow-card.positive .dash-cashflow-icon { background: rgba(21,128,61,0.12); color: #15803D; }
-.dash-cashflow-card.negative .dash-cashflow-icon { background: rgba(220,38,38,0.12); color: #DC2626; }
+.dash-cashflow-card.positive .dash-cashflow-icon { background: rgba(21,128,61,0.12); color: var(--status-success-text); }
+.dash-cashflow-card.negative .dash-cashflow-icon { background: rgba(220,38,38,0.12); color: var(--status-danger-text); }
 .dash-cashflow-label {
   font-size: 0.82rem;
   font-weight: 700;
@@ -304,7 +409,7 @@
 }
 .dash-cashflow-value {
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
   letter-spacing: -0.01em;
 }
@@ -316,10 +421,10 @@
   display: inline-block;
   margin-top: 0.2rem;
 }
-.dash-cashflow-badge.pos { background: rgba(21,128,61,0.10); color: #15803D; }
-.dash-cashflow-badge.neg { background: rgba(220,38,38,0.10); color: #DC2626; }
+.dash-cashflow-badge.pos { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
+.dash-cashflow-badge.neg { background: rgba(220,38,38,0.10); color: var(--status-danger-text); }
 
-/* ── 5. Charts row ──────────────────────────────────────────────── */
+/* â”€â”€ 5. Charts row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-charts-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -377,7 +482,7 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-.dash-chart-badge.green { background: rgba(21,128,61,0.09); color: #15803D; }
+.dash-chart-badge.green { background: rgba(21,128,61,0.09); color: var(--status-success-text); }
 
 /* Time range pills */
 .dash-time-selector {
@@ -415,10 +520,10 @@
   font-size: 0.78rem;
 }
 .dash-tooltip-date { color: var(--text-secondary); margin-bottom: 2px; }
-.dash-tooltip-value { font-weight: 800; color: var(--palette-ocean-blue); font-size: 0.9rem; }
+.dash-tooltip-value { font-weight: 700; color: var(--palette-ocean-blue); font-size: 0.9rem; }
 .dash-tooltip-sub { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
 
-/* ── 6. Payment Collections ─────────────────────────────────────── */
+/* â”€â”€ 6. Payment Collections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-collections-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -458,7 +563,7 @@
 }
 .dash-donut-pct {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
   line-height: 1.1;
 }
@@ -493,10 +598,10 @@
   border-radius: 50%;
   margin-right: 0.4rem;
 }
-.dash-dot.blue  { background: #0277B6; }
-.dash-dot.amber { background: #F59E0B; }
+.dash-dot.blue  { background: var(--palette-ocean-blue); }
+.dash-dot.amber { background: var(--palette-sky-blue); }
 
-/* ── Generic card ───────────────────────────────────────────────── */
+/* â”€â”€ Generic card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -511,12 +616,12 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.dash-icon-badge.blue  { background: rgba(2,119,182,0.10); color: #0277B6; }
-.dash-icon-badge.red   { background: rgba(220,38,38,0.10); color: #DC2626; }
-.dash-icon-badge.navy  { background: rgba(3,4,94,0.09); color: #03045E; }
-.dash-icon-badge.green { background: rgba(21,128,61,0.10); color: #15803D; }
+.dash-icon-badge.blue  { background: rgba(2,119,182,0.10); color: var(--palette-ocean-blue); }
+.dash-icon-badge.red   { background: rgba(220,38,38,0.10); color: var(--status-danger-text); }
+.dash-icon-badge.navy  { background: rgba(3,4,94,0.09); color: var(--palette-deep-navy); }
+.dash-icon-badge.green { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
 
-/* ── 7. Top Customers ───────────────────────────────────────────── */
+/* â”€â”€ 7. Top Customers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-top-customers {
   display: flex;
   flex-direction: column;
@@ -534,7 +639,7 @@
 .dash-top-cust-row:hover { background: var(--bg-secondary); }
 .dash-rank {
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-ocean-blue);
   min-width: 28px;
   letter-spacing: 0.03em;
@@ -560,12 +665,12 @@
 }
 .dash-top-cust-amount {
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
   flex-shrink: 0;
 }
 
-/* ── 8. Pending Dues card ───────────────────────────────────────── */
+/* â”€â”€ 8. Pending Dues card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-dues-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -590,7 +695,7 @@
 }
 .dash-dues-stat-val {
   font-size: 1.02rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--accent-red);
   line-height: 1.2;
 }
@@ -647,7 +752,7 @@
 }
 .dash-dues-amount {
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--accent-red);
   margin-top: 0.15rem;
 }
@@ -678,7 +783,7 @@
   color: var(--text-secondary);
 }
 
-/* ── 9. Recent Activity ─────────────────────────────────────────── */
+/* â”€â”€ 9. Recent Activity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-activity-tabs {
   display: flex;
   gap: 0.25rem;
@@ -718,7 +823,7 @@
   align-items: center;
   gap: 0.7rem;
   padding: 0.6rem 0.25rem;
-  border-bottom: 1px solid var(--border-light, #F8FAFC);
+  border-bottom: 1px solid var(--border-light, var(--palette-ice-light));
 }
 .dash-activity-row:last-of-type { border-bottom: none; }
 .dash-activity-icon {
@@ -727,9 +832,9 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.dash-activity-icon.blue   { background: rgba(2,119,182,0.10); color: #0277B6; }
-.dash-activity-icon.green  { background: rgba(21,128,61,0.10); color: #15803D; }
-.dash-activity-icon.orange { background: rgba(217,119,6,0.10); color: #D97706; }
+.dash-activity-icon.blue   { background: rgba(2,119,182,0.10); color: var(--palette-ocean-blue); }
+.dash-activity-icon.green  { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
+.dash-activity-icon.orange { background: var(--palette-ocean-soft); color: var(--palette-ocean-blue); }
 .dash-activity-main {
   flex: 1;
   min-width: 0;
@@ -770,11 +875,11 @@
 }
 .dash-activity-amount {
   font-size: 0.86rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--palette-deep-navy);
 }
-.dash-activity-amount.green { color: #15803D; }
-.dash-activity-amount.red   { color: #DC2626; }
+.dash-activity-amount.green { color: var(--status-success-text); }
+.dash-activity-amount.red   { color: var(--status-danger-text); }
 
 /* Status/mode/category pills */
 .dash-status-pill {
@@ -785,18 +890,18 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.dash-status-pill.paid    { background: rgba(21,128,61,0.10); color: #15803D; }
-.dash-status-pill.partial { background: rgba(217,119,6,0.10); color: #D97706; }
-.dash-status-pill.unpaid  { background: rgba(220,38,38,0.10); color: #DC2626; }
+.dash-status-pill.paid    { background: rgba(21,128,61,0.10); color: var(--status-success-text); }
+.dash-status-pill.partial { background: rgba(217,119,6,0.10); color: var(--status-warning-text); }
+.dash-status-pill.unpaid  { background: rgba(220,38,38,0.10); color: var(--status-danger-text); }
 .dash-mode-pill {
   font-size: 0.6rem; font-weight: 700;
-  background: rgba(2,119,182,0.09); color: #0277B6;
+  background: rgba(2,119,182,0.09); color: var(--palette-ocean-blue);
   padding: 0.1rem 0.35rem; border-radius: 999px;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
 .dash-cat-pill {
   font-size: 0.6rem; font-weight: 700;
-  background: rgba(217,119,6,0.09); color: #D97706;
+  background: rgba(217,119,6,0.09); color: var(--status-warning-text);
   padding: 0.1rem 0.35rem; border-radius: 999px;
   text-transform: capitalize;
 }
@@ -814,7 +919,7 @@
 }
 .dash-view-all-link:hover { color: var(--palette-ocean-hover); }
 
-/* ── Skeleton / Loading ─────────────────────────────────────────── */
+/* â”€â”€ Skeleton / Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-skeleton {
   background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(203,240,248,0.35) 50%, var(--bg-secondary) 75%);
   background-size: 200% 100%;
@@ -831,7 +936,7 @@
   100% { background-position:  200% 0; }
 }
 
-/* ── Error state ─────────────────────────────────────────────────── */
+/* â”€â”€ Error state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-error-card {
   background: var(--bg-card);
   border: 1px solid #FCA5A5;
@@ -840,12 +945,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #DC2626;
+  color: var(--status-danger-text);
 }
 .dash-error-title {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #DC2626;
+  color: var(--status-danger-text);
   margin-bottom: 0.15rem;
 }
 .dash-error-sub {
@@ -855,8 +960,8 @@
 .dash-retry-btn {
   margin-left: auto;
   background: transparent;
-  border: 1px solid #DC2626;
-  color: #DC2626;
+  border: 1px solid var(--status-danger-text);
+  color: var(--status-danger-text);
   border-radius: 8px;
   padding: 0.4rem 0.85rem;
   font-size: 0.8rem;
@@ -870,7 +975,7 @@
 }
 .dash-retry-btn:hover { background: rgba(220,38,38,0.06); }
 
-/* ── Empty state ─────────────────────────────────────────────────── */
+/* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dash-empty {
   display: flex;
   flex-direction: column;
@@ -883,7 +988,7 @@
   opacity: 0.7;
 }
 
-/* ═══ Responsive ════════════════════════════════════════════════ */
+/* â•â•â• Responsive â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @media (max-width: 767px) {
   .dash-charts-row {
     grid-template-columns: 1fr;
@@ -910,7 +1015,7 @@
   }
 }
 
-/* ── Legacy classes preserved (used by Reports.jsx and old CSS refs) ── */
+/* â”€â”€ Legacy classes preserved (used by Reports.jsx and old CSS refs) â”€â”€ */
 .dashboard-banner {
   background: linear-gradient(135deg, var(--palette-ocean-blue) 0%, var(--palette-deep-navy) 100%);
   border: 1px solid rgba(2,119,182,0.2);
@@ -947,7 +1052,7 @@
 .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .chart-title  { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); }
 
-/* ── Reduced motion ──────────────────────────────────────────────── */
+/* â”€â”€ Reduced motion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
   .dash-skeleton { animation: none; }
   .dash-kpi-card,

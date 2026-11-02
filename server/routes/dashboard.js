@@ -14,8 +14,7 @@ function nowIST() {
 }
 
 function startOfDayIST(d) {
-  const ist = new Date(d.getTime() + IST_OFFSET_MS);
-  return new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), ist.getUTCDate()) - IST_OFFSET_MS);
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - IST_OFFSET_MS);
 }
 
 function endOfDayIST(d) {
@@ -28,13 +27,11 @@ function addDays(d, n) {
 }
 
 function startOfMonthIST(d) {
-  const ist = new Date(d.getTime() + IST_OFFSET_MS);
-  return new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), 1) - IST_OFFSET_MS);
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) - IST_OFFSET_MS);
 }
 
 function endOfMonthIST(d) {
-  const ist = new Date(d.getTime() + IST_OFFSET_MS);
-  const nextMonth = new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth() + 1, 1) - IST_OFFSET_MS);
+  const nextMonth = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1) - IST_OFFSET_MS);
   return new Date(nextMonth.getTime() - 1);
 }
 
@@ -139,7 +136,14 @@ async function getOverviewAgg(userId, start, end) {
       }
     ]),
     Order.aggregate([
-      { $match: { user: userId, paymentStatus: { $in: ['unpaid', 'partial'] }, status: { $ne: 'cancelled' } } },
+      {
+        $match: {
+          user: userId,
+          createdAt: { $gte: start, $lte: end },
+          paymentStatus: { $in: ['unpaid', 'partial'] },
+          status: { $ne: 'cancelled' }
+        }
+      },
       {
         $group: {
           _id: null,

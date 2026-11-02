@@ -33,13 +33,14 @@ const QUARTERS = [
 ];
 
 const DONUT_COLORS = {
-  collected: '#15803D', // Green
-  pending: '#DC2626',   // Red
+  collected: 'var(--status-success-text)', // Green
+  pending: 'var(--status-danger-text)',   // Red
 };
 
 const EXP_COLORS = [
-  '#0277B6', '#7C3AED', '#EA580C', '#D97706',
-  '#15803D', '#0891B2', '#475569', '#64748B'
+  'var(--palette-ocean-blue)', 'var(--palette-sky-blue)', 'var(--palette-deep-navy)',
+  'var(--palette-ice-blue)', 'var(--text-secondary)', 'var(--palette-ocean-hover)',
+  'var(--palette-ocean-blue)', 'var(--palette-sky-blue)'
 ];
 
 function calcDelta(curr, prev) {
@@ -53,19 +54,19 @@ function TrendTooltip({ active, payload, label }) {
   return (
     <div style={{
       background: '#FFFFFF',
-      border: '1px solid #E2E8F0',
+      border: '1px solid var(--border)',
       borderRadius: 10,
       padding: '0.6rem 0.85rem',
       boxShadow: '0 4px 12px rgba(3, 4, 94, 0.1)',
       fontSize: '0.8rem',
     }}>
-      <div style={{ fontWeight: 700, color: '#03045E', marginBottom: 4 }}>
+      <div style={{ fontWeight: 700, color: 'var(--palette-deep-navy)', marginBottom: 4 }}>
         {label}
       </div>
       {payload.map((entry, idx) => (
         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0' }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: entry.color }} />
-          <span style={{ color: '#64748B', flex: 1 }}>{entry.name}:</span>
+          <span style={{ color: 'var(--text-secondary)', flex: 1 }}>{entry.name}:</span>
           <strong style={{ color: entry.color }}>{fmt(entry.value)}</strong>
         </div>
       ))}
@@ -170,15 +171,15 @@ export default function Reports() {
           <div className="rpt-print-brand">
             <img src={logo} alt="" className="rpt-print-logo" />
             <div>
-            <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#03045E' }}>
+            <h1 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--palette-deep-navy)' }}>
               {user?.businessName || 'Hydro Business Manager'}
             </h1>
-            <p style={{ margin: '4px 0', fontSize: '0.9rem', color: '#64748B' }}>
+            <p style={{ margin: '4px 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               Official Financial Statement &amp; Business Intelligence Report
             </p>
             </div>
           </div>
-          <div style={{ textAlign: 'right', fontSize: '0.85rem', color: '#64748B' }}>
+          <div style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             <div><strong>Period:</strong> {report?.period?.label}</div>
             <div><strong>Generated:</strong> {dayjs().format('D MMMM YYYY, h:mm A')}</div>
           </div>
@@ -299,7 +300,7 @@ export default function Reports() {
                 onChange={e => setCustomRange(r => ({ ...r, start: e.target.value }))}
                 aria-label="Start Date"
               />
-              <span style={{ color: '#64748B', fontSize: '0.82rem' }}>→</span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.82rem' }}>→</span>
               <input
                 type="date"
                 className="rpt-date-input"
@@ -332,7 +333,7 @@ export default function Reports() {
         </div>
       ) : !report ? (
         <div className="rpt-empty-state">
-          <AlertCircle size={36} style={{ color: '#DC2626' }} />
+          <AlertCircle size={36} style={{ color: 'var(--status-danger-text)' }} />
           <h3>Could not load financial report</h3>
           <p>Please check your connection and try refreshing.</p>
         </div>
@@ -540,15 +541,15 @@ export default function Reports() {
                 <div className="rpt-collection-stats">
                   <div className="rpt-stat-row">
                     <span><span className="rpt-stat-dot green" />Total Collected</span>
-                    <strong style={{ color: '#15803D' }}>{fmt(overview.totalCollected)}</strong>
+                    <strong style={{ color: 'var(--status-success-text)' }}>{fmt(overview.totalCollected)}</strong>
                   </div>
                   <div className="rpt-stat-row">
                     <span><span className="rpt-stat-dot red" />Outstanding Dues</span>
-                    <strong style={{ color: '#DC2626' }}>{fmt(overview.periodOutstanding)}</strong>
+                    <strong style={{ color: 'var(--status-danger-text)' }}>{fmt(overview.periodOutstanding)}</strong>
                   </div>
-                  <div className="rpt-stat-row" style={{ paddingTop: '0.4rem', borderTop: '1px dashed #E2E8F0', fontWeight: 700 }}>
+                  <div className="rpt-stat-row" style={{ paddingTop: '0.4rem', borderTop: '1px dashed var(--border)', fontWeight: 700 }}>
                     <span><span className="rpt-stat-dot blue" />Total Billed</span>
-                    <span style={{ color: '#03045E' }}>{fmt(overview.totalRevenue)}</span>
+                    <span style={{ color: 'var(--palette-deep-navy)' }}>{fmt(overview.totalRevenue)}</span>
                   </div>
                 </div>
               </div>
@@ -564,7 +565,7 @@ export default function Reports() {
                     <div className="rpt-card-sub">Category distribution for period</div>
                   </div>
                 </div>
-                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#DC2626' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--status-danger-text)' }}>
                   {fmt(overview.totalExpenses)}
                 </span>
               </div>
@@ -576,7 +577,7 @@ export default function Reports() {
                       <div className="rpt-expense-item-header">
                         <span className="rpt-expense-name">{item.category}</span>
                         <div>
-                          <span style={{ color: '#64748B', fontSize: '0.74rem', marginRight: 8 }}>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.74rem', marginRight: 8 }}>
                             {item.share}% ({item.count} items)
                           </span>
                           <span className="rpt-expense-amount">{fmt(item.total)}</span>
@@ -596,7 +597,7 @@ export default function Reports() {
                 </div>
               ) : (
                 <div className="rpt-empty-state" style={{ padding: '1.5rem 1rem' }}>
-                  <CheckCircle2 size={24} style={{ color: '#15803D' }} />
+                  <CheckCircle2 size={24} style={{ color: 'var(--status-success-text)' }} />
                   <span style={{ fontSize: '0.84rem' }}>No expenses recorded for this period</span>
                 </div>
               )}
@@ -614,7 +615,7 @@ export default function Reports() {
                   <div className="rpt-card-sub">Volume and revenue by product snapshot</div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0277B6' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--palette-ocean-blue)' }}>
                 {overview.totalCases || 0} Total Cases
               </span>
             </div>
@@ -634,7 +635,7 @@ export default function Reports() {
               </div>
             ) : (
               <div className="rpt-empty-state" style={{ padding: '1.5rem 1rem' }}>
-                <Package size={24} style={{ color: '#94A3B8' }} />
+                <Package size={24} style={{ color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: '0.84rem' }}>No product sales recorded in this period</span>
               </div>
             )}
@@ -703,7 +704,7 @@ export default function Reports() {
                       gap: 3,
                       fontSize: '0.78rem',
                       fontWeight: 700,
-                      color: '#0277B6',
+                      color: 'var(--palette-ocean-blue)',
                       textDecoration: 'none'
                     }}
                   >
@@ -713,7 +714,7 @@ export default function Reports() {
               </div>
             ) : (
               <div className="rpt-empty-state" style={{ padding: '1.5rem 1rem' }}>
-                <Users size={24} style={{ color: '#94A3B8' }} />
+                <Users size={24} style={{ color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: '0.84rem' }}>No customer activity in this period</span>
               </div>
             )}
@@ -742,7 +743,7 @@ export default function Reports() {
                     <CartesianGrid stroke="#F1F5F9" strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      tick={{ fill: '#64748B', fontSize: 11 }}
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                       tickFormatter={m => {
                         const [y, mm] = m.split('-');
                         return `${MONTHS[parseInt(mm, 10) - 1].slice(0, 3)} '${y.slice(2)}`;
@@ -751,7 +752,7 @@ export default function Reports() {
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: '#64748B', fontSize: 10 }}
+                      tick={{ fill: 'var(--text-secondary)', fontSize: 10 }}
                       tickFormatter={v => (v >= 1000 ? `₹${Math.round(v / 1000)}k` : `₹${v}`)}
                       axisLine={false}
                       tickLine={false}
@@ -762,9 +763,9 @@ export default function Reports() {
                       iconType="circle"
                       iconSize={8}
                     />
-                    <Bar dataKey="revenue" name="Billed Revenue" fill="#0277B6" radius={[4, 4, 0, 0]} maxBarSize={22} />
-                    <Bar dataKey="collected" name="Collections" fill="#15803D" radius={[4, 4, 0, 0]} maxBarSize={22} />
-                    <Bar dataKey="expenses" name="Expenses" fill="#DC2626" radius={[4, 4, 0, 0]} maxBarSize={22} />
+                    <Bar dataKey="revenue" name="Billed Revenue" fill="var(--palette-ocean-blue)" radius={[4, 4, 0, 0]} maxBarSize={22} />
+                    <Bar dataKey="collected" name="Collections" fill="var(--status-success-text)" radius={[4, 4, 0, 0]} maxBarSize={22} />
+                    <Bar dataKey="expenses" name="Expenses" fill="var(--status-danger-text)" radius={[4, 4, 0, 0]} maxBarSize={22} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

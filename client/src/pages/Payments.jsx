@@ -91,6 +91,7 @@ function PaymentModal({ orders, customers, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (!form.customerId) {
       toast.error('Please select a customer');
       return;
@@ -188,13 +189,13 @@ function PaymentModal({ orders, customers, onClose, onSave }) {
 
             {selectedOrder && (
               <div className="pm-record-order-info">
-                <div style={{ fontWeight: 700, color: '#03045E' }}>
+                <div style={{ fontWeight: 700, color: 'var(--palette-deep-navy)' }}>
                   {selectedOrder.orderNumber} Summary
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.8rem' }}>
                   <span>Total: <strong>₹{selectedOrder.totalAmount?.toLocaleString('en-IN')}</strong></span>
                   <span>Paid: <strong>₹{(selectedOrder.paidAmount || 0).toLocaleString('en-IN')}</strong></span>
-                  <span style={{ color: '#DC2626', fontWeight: 700 }}>
+                  <span style={{ color: 'var(--status-danger-text)', fontWeight: 700 }}>
                     Pending: ₹{(selectedOrder.totalAmount - (selectedOrder.paidAmount || 0)).toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -396,7 +397,7 @@ export function PaymentDetailsSheet({ payment, onClose, onDelete }) {
               <span className="pm-detail-row-label">
                 <Hash size={15} /> Related Order
               </span>
-              <span className="pm-detail-row-value" style={{ color: '#0277B6' }}>
+              <span className="pm-detail-row-value" style={{ color: 'var(--palette-ocean-blue)' }}>
                 {payment.order?.orderNumber || 'General Payment'}
               </span>
             </div>
@@ -501,7 +502,7 @@ export function PaymentTransactionCard({
                 {payment.order.orderNumber}
               </div>
             ) : (
-              <div className="pm-card-order-id" style={{ color: '#64748B' }}>
+              <div className="pm-card-order-id" style={{ color: 'var(--text-secondary)' }}>
                 General Payment
               </div>
             )}
@@ -740,7 +741,7 @@ export default function Payments() {
 
   // Handle delete execution
   const handleConfirmDelete = async () => {
-    if (!paymentToDelete) return;
+    if (deleting || !paymentToDelete) return;
     setDeleting(true);
     try {
       await api.delete(`/payments/${paymentToDelete._id}`);

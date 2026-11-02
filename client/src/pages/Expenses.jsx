@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import {
   Plus, Search, Edit2, Trash2, Receipt, MoreVertical,
   X, Calendar, Building, CreditCard, FileText,
-  TrendingDown, Hash, AlertTriangle, ChevronRight, Eye
+  TrendingDown, Hash, AlertTriangle, ChevronRight, ChevronDown, Eye
 } from 'lucide-react';
 import '../styles/expenses.css';
 
@@ -85,6 +85,7 @@ function ExpenseModal({ expense, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     const parsedAmount = parseFloat(form.amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       toast.error('Please enter a valid expense amount');
@@ -392,21 +393,21 @@ function DeleteConfirmModal({ expense, onClose, onConfirm, loading }) {
 
         <div className="exp-delete-context-box">
           <div className="exp-delete-context-row">
-            <span style={{ color: '#64748B' }}>Amount:</span>
-            <strong style={{ color: '#DC2626' }}>{fmt(expense.amount)}</strong>
+            <span style={{ color: 'var(--text-secondary)' }}>Amount:</span>
+            <strong style={{ color: 'var(--status-danger-text)' }}>{fmt(expense.amount)}</strong>
           </div>
           <div className="exp-delete-context-row">
-            <span style={{ color: '#64748B' }}>Description:</span>
+            <span style={{ color: 'var(--text-secondary)' }}>Description:</span>
             <strong>{expense.description}</strong>
           </div>
           {expense.vendor && (
             <div className="exp-delete-context-row">
-              <span style={{ color: '#64748B' }}>Vendor:</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Vendor:</span>
               <span>{expense.vendor}</span>
             </div>
           )}
           <div className="exp-delete-context-row">
-            <span style={{ color: '#64748B' }}>Date:</span>
+            <span style={{ color: 'var(--text-secondary)' }}>Date:</span>
             <span>{dayjs(expense.date).format('D MMM YYYY')}</span>
           </div>
         </div>
@@ -477,7 +478,7 @@ function ExpenseCard({ expense, onViewDetails, onEdit, onDelete }) {
         <div className="exp-card-secondary">
           {expense.vendor && (
             <div className="exp-card-vendor-row">
-              <Building size={13} style={{ color: '#94A3B8' }} />
+              <Building size={13} style={{ color: 'var(--text-muted)' }} />
               <span>Vendor: <strong>{expense.vendor}</strong></span>
               {expense.paymentMode && (
                 <span className="exp-mode-pill" style={{ marginLeft: 'auto' }}>
@@ -582,7 +583,7 @@ function ExpensesTable({ expenses, onEdit, onDelete, onViewDetails }) {
                 <CategoryBadge category={e.category} />
               </td>
               <td className="exp-table-vendor">
-                {e.vendor || <span style={{ color: '#CBD5E1' }}>—</span>}
+                {e.vendor || <span style={{ color: 'var(--border)' }}>—</span>}
               </td>
               <td className="exp-table-amount right">
                 {fmt(e.amount)}
@@ -591,11 +592,11 @@ function ExpensesTable({ expenses, onEdit, onDelete, onViewDetails }) {
                 {e.paymentMode ? (
                   <span className="exp-mode-pill">{e.paymentMode.toUpperCase()}</span>
                 ) : (
-                  <span style={{ color: '#CBD5E1' }}>—</span>
+                  <span style={{ color: 'var(--border)' }}>—</span>
                 )}
               </td>
               <td className="exp-table-notes">
-                {e.notes || <span style={{ color: '#CBD5E1' }}>—</span>}
+                {e.notes || <span style={{ color: 'var(--border)' }}>—</span>}
               </td>
               <td className="right">
                 <div className="exp-table-actions">
@@ -646,6 +647,7 @@ export default function Expenses() {
   const [period, setPeriod] = useState('thisMonth');
   const [customRange, setCustomRange] = useState({ start: '', end: '' });
   const [showCustomPicker, setShowCustomPicker] = useState(false);
+  const [metricsExpanded, setMetricsExpanded] = useState(false);
 
   // Modals & Sheets
   const [activeModal, setActiveModal] = useState(null); // 'new' | expense object
@@ -787,6 +789,7 @@ export default function Expenses() {
 
   // Delete handler
   const handleConfirmDelete = async (id) => {
+    if (deleting) return;
     setDeleting(true);
     try {
       await api.delete(`/expenses/${id}`);
@@ -860,7 +863,17 @@ export default function Expenses() {
       </div>
 
       {/* ─── 3. Metrics Summary Cards ─── */}
-      <div className="exp-metrics-grid">
+      <button
+        type="button"
+        className="exp-metrics-toggle"
+        onClick={() => setMetricsExpanded((expanded) => !expanded)}
+        aria-expanded={metricsExpanded}
+        aria-controls="expense-metrics"
+      >
+        <span>Expense metrics</span>
+        <ChevronDown size={18} className={metricsExpanded ? 'expanded' : ''} />
+      </button>
+      <div id="expense-metrics" className={`exp-metrics-grid${metricsExpanded ? ' expanded' : ''}`}>
         <div className="exp-metric-card">
           <div className="exp-metric-icon red">
             <TrendingDown size={20} />

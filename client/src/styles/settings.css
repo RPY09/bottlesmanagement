@@ -1,11 +1,11 @@
-/* ═══════════════════════════════════════════════════════════════════
-   HYDRO BUSINESS MANAGER — SETTINGS & CONFIGURATION
-   Ocean Blue Design System · Prefix: .set-*
-   ═══════════════════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HYDRO BUSINESS MANAGER â€” SETTINGS & CONFIGURATION
+   Ocean Blue Design System Â· Prefix: .set-*
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .set-page {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  color: #172033;
+  font-family: 'Arimo', sans-serif;
+  color: var(--text-primary);
   width: 100%;
   max-width: 100%;
   display: flex;
@@ -14,7 +14,7 @@
   padding-bottom: calc(72px + 2.5rem);
 }
 
-/* ─── 1. Header ─── */
+/* â”€â”€â”€ 1. Header â”€â”€â”€ */
 .set-header {
   display: flex;
   align-items: center;
@@ -31,8 +31,8 @@
 
 .set-title {
   font-size: 1.45rem;
-  font-weight: 800;
-  color: #03045E;
+  font-weight: 700;
+  color: var(--palette-deep-navy);
   letter-spacing: -0.02em;
   margin: 0;
   line-height: 1.2;
@@ -40,15 +40,15 @@
 
 .set-subtitle {
   font-size: 0.85rem;
-  color: #64748B;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 500;
 }
 
-/* ─── 2. Generic Card Container ─── */
+/* â”€â”€â”€ 2. Generic Card Container â”€â”€â”€ */
 .set-card {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 18px;
   padding: 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
@@ -68,7 +68,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding-bottom: 0.85rem;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--palette-ice-soft);
 }
 
 .set-card-title-group {
@@ -87,24 +87,24 @@
   flex-shrink: 0;
 }
 
-.set-card-icon.blue  { background: rgba(2, 119, 182, 0.1); color: #0277B6; }
-.set-card-icon.navy  { background: rgba(3, 4, 94, 0.08); color: #03045E; }
-.set-card-icon.green { background: rgba(21, 128, 61, 0.1); color: #15803D; }
+.set-card-icon.blue  { background: rgba(2, 119, 182, 0.1); color: var(--palette-ocean-blue); }
+.set-card-icon.navy  { background: rgba(3, 4, 94, 0.08); color: var(--palette-deep-navy); }
+.set-card-icon.green { background: rgba(21, 128, 61, 0.1); color: var(--status-success-text); }
 
 .set-card-title {
   font-size: 1.05rem;
-  font-weight: 800;
-  color: #03045E;
+  font-weight: 700;
+  color: var(--palette-deep-navy);
   margin: 0;
 }
 
 .set-card-sub {
   font-size: 0.76rem;
-  color: #64748B;display: none;
+  color: var(--text-secondary);display: none;
   margin-top: 0.15rem;
 }
 
-/* ─── 3. Products & Prices Section ─── */
+/* â”€â”€â”€ 3. Products & Prices Section â”€â”€â”€ */
 
 /* Desktop Entry Form */
 .set-prod-form-desktop {
@@ -117,8 +117,8 @@
     grid-template-columns: 2.2fr 1.3fr 1.1fr 1.3fr auto;
     gap: 0.75rem;
     align-items: flex-end;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background: var(--palette-ice-light);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 1rem 1.1rem;
   }
@@ -129,8 +129,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: var(--palette-ice-light);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1rem;
 }
@@ -161,7 +161,7 @@
 .set-form-label-hint {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 .set-form-input,
@@ -169,12 +169,12 @@
 .set-form-textarea {
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid #CBD5E1;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.65rem 0.85rem;
   font-size: 0.86rem;
   font-family: inherit;
-  color: #172033;
+  color: var(--text-primary);
   outline: none;
   transition: all 0.15s ease;
 }
@@ -182,7 +182,7 @@
 .set-form-input:focus,
 .set-form-select:focus,
 .set-form-textarea:focus {
-  border-color: #0277B6;
+  border-color: var(--palette-ocean-blue);
   box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
   background: #FFFFFF;
 }
@@ -200,8 +200,8 @@
   gap: 0.35rem;
   font-size: 0.76rem;
   font-weight: 700;
-  color: #15803D;
-  background: #E8F5EC;
+  color: var(--status-success-text);
+  background: var(--status-success-bg);
   padding: 0.25rem 0.6rem;
   border-radius: 8px;
   align-self: flex-start;
@@ -210,7 +210,7 @@
 
 /* Add / Update Product Buttons */
 .set-btn-add-prod {
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -229,7 +229,7 @@
 }
 
 .set-btn-add-prod:hover {
-  background: #025E91;
+  background: var(--palette-ocean-hover);
   transform: translateY(-1px);
 }
 
@@ -243,9 +243,9 @@
 }
 
 .set-btn-cancel-edit {
-  background: #F1F5F9;
+  background: var(--palette-ice-soft);
   color: #475569;
-  border: 1px solid #CBD5E1;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.65rem 0.85rem;
   font-size: 0.82rem;
@@ -256,10 +256,10 @@
 }
 
 .set-btn-cancel-edit:hover {
-  background: #E2E8F0;
+  background: var(--border);
 }
 
-/* ─── 4. Desktop Product Table (>= 1024px) ─── */
+/* â”€â”€â”€ 4. Desktop Product Table (>= 1024px) â”€â”€â”€ */
 .set-desktop-only {
   display: none;
 }
@@ -271,7 +271,7 @@
 }
 
 .set-table-wrapper {
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   background: #FFFFFF;
@@ -285,14 +285,14 @@
 }
 
 .set-table th {
-  background: #F8FAFC;
-  color: #64748B;
+  background: var(--palette-ice-light);
+  color: var(--text-secondary);
   font-weight: 700;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
@@ -303,8 +303,8 @@
 
 .set-table td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid #F1F5F9;
-  color: #172033;
+  border-bottom: 1px solid var(--palette-ice-soft);
+  color: var(--text-primary);
   vertical-align: middle;
 }
 
@@ -313,12 +313,12 @@
 }
 
 .set-table tr:hover td {
-  background: #F8FAFC;
+  background: var(--palette-ice-light);
 }
 
 .set-table tr.archived td {
   opacity: 0.55;
-  background: #F8FAFC;
+  background: var(--palette-ice-light);
 }
 
 /* Size badge */
@@ -327,7 +327,7 @@
   align-items: center;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0277B6;
+  color: var(--palette-ocean-blue);
   background: rgba(2, 119, 182, 0.09);
   padding: 0.18rem 0.5rem;
   border-radius: 6px;
@@ -343,8 +343,8 @@
   letter-spacing: 0.03em;
 }
 
-.set-status-pill.active   { background: #E8F5EC; color: #15803D; }
-.set-status-pill.archived { background: #F1F5F9; color: #64748B; }
+.set-status-pill.active   { background: var(--status-success-bg); color: var(--status-success-text); }
+.set-status-pill.archived { background: var(--palette-ice-soft); color: var(--text-secondary); }
 
 .set-table-actions {
   display: flex;
@@ -362,28 +362,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748B;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .set-action-btn:hover {
-  background: #F1F5F9;
-  border-color: #E2E8F0;
-  color: #0277B6;
+  background: var(--palette-ice-soft);
+  border-color: var(--border);
+  color: var(--palette-ocean-blue);
 }
 
 .set-action-btn.archive:hover {
   background: rgba(217, 119, 6, 0.1);
-  color: #D97706;
+  color: var(--status-warning-text);
 }
 
 .set-action-btn.delete:hover {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
 }
 
-/* ─── 5. Mobile Product Cards (< 1024px) ─── */
+/* â”€â”€â”€ 5. Mobile Product Cards (< 1024px) â”€â”€â”€ */
 .set-mobile-only {
   display: block;
 }
@@ -402,7 +402,7 @@
 
 .set-prod-card {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 0.9rem 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
@@ -413,13 +413,13 @@
 }
 
 .set-prod-card:hover {
-  border-color: #CBD5E1;
+  border-color: var(--border);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
 }
 
 .set-prod-card.archived {
   opacity: 0.65;
-  background: #F8FAFC;
+  background: var(--palette-ice-light);
 }
 
 .set-prod-card-top {
@@ -432,18 +432,18 @@
 .set-prod-card-name {
   font-weight: 700;
   font-size: 0.94rem;
-  color: #03045E;
+  color: var(--palette-deep-navy);
 }
 
 .set-prod-card-price {
   font-size: 1.1rem;
-  font-weight: 800;
-  color: #172033;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .set-prod-card-meta {
   font-size: 0.76rem;
-  color: #64748B;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -452,8 +452,8 @@
 .set-prod-card-case {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #15803D;
-  background: #E8F5EC;
+  color: var(--status-success-text);
+  background: var(--status-success-bg);
   padding: 0.2rem 0.55rem;
   border-radius: 6px;
   align-self: flex-start;
@@ -464,7 +464,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 0.45rem;
-  border-top: 1px dashed #F1F5F9;
+  border-top: 1px dashed var(--palette-ice-soft);
   margin-top: 0.2rem;
 }
 
@@ -473,7 +473,7 @@
   border: none;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #0277B6;
+  color: var(--palette-ocean-blue);
   cursor: pointer;
   padding: 0.25rem 0.45rem;
   border-radius: 6px;
@@ -488,7 +488,7 @@
 }
 
 .set-card-action-link.archive {
-  color: #D97706;
+  color: var(--status-warning-text);
 }
 
 .set-card-action-link.archive:hover {
@@ -496,14 +496,14 @@
 }
 
 .set-card-action-link.delete {
-  color: #DC2626;
+  color: var(--status-danger-text);
 }
 
 .set-card-action-link.delete:hover {
-  background: #FEE2E2;
+  background: var(--status-danger-bg);
 }
 
-/* ─── 6. Personal & Business Information Grid ─── */
+/* â”€â”€â”€ 6. Personal & Business Information Grid â”€â”€â”€ */
 .set-profiles-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -523,8 +523,8 @@
   align-items: center;
   gap: 0.85rem;
   padding: 0.75rem 0.85rem;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: var(--palette-ice-light);
+  border: 1px solid var(--border);
   border-radius: 14px;
 }
 
@@ -532,13 +532,13 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #03045E 0%, #0277B6 100%);
+  background: linear-gradient(135deg, var(--palette-deep-navy) 0%, var(--palette-ocean-blue) 100%);
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.03em;
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(3, 4, 94, 0.2);
@@ -552,9 +552,9 @@
 }
 
 .set-avatar-name {
-  font-weight: 800;
+  font-weight: 700;
   font-size: 0.96rem;
-  color: #03045E;
+  color: var(--palette-deep-navy);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -562,7 +562,7 @@
 
 .set-avatar-email {
   font-size: 0.76rem;
-  color: #64748B;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -578,7 +578,7 @@
 }
 
 .set-btn-save {
-  background: #0277B6;
+  background: var(--palette-ocean-blue);
   color: #FFFFFF;
   border: none;
   border-radius: 10px;
@@ -594,7 +594,7 @@
 }
 
 .set-btn-save:hover {
-  background: #025E91;
+  background: var(--palette-ocean-hover);
   transform: translateY(-1px);
 }
 
@@ -610,7 +610,7 @@
 .set-unsaved-badge {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #D97706;
+  color: var(--status-warning-text);
   background: rgba(217, 119, 6, 0.1);
   padding: 0.25rem 0.6rem;
   border-radius: 9999px;
@@ -622,12 +622,12 @@
 /* Validation error text */
 .set-error-text {
   font-size: 0.72rem;
-  color: #DC2626;
+  color: var(--status-danger-text);
   font-weight: 600;
   margin-top: 0.1rem;
 }
 
-/* ─── 7. Accessibility: Reduced Motion ─── */
+/* â”€â”€â”€ 7. Accessibility: Reduced Motion â”€â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
   .set-card,
   .set-prod-card,

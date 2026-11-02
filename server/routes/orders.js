@@ -261,8 +261,15 @@ router.patch('/:id/reminder', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
-  await Order.findOneAndDelete({ _id: req.params.id, user: req.user.id });
-  res.json({ message: 'Order deleted' });
+  const userId = req.user?._id || req.user?.id;
+  const order = await Order.findOne({ _id: req.params.id, user: userId }).select('_id').lean();
+  if (!order) return res.status(404).json({ message: 'Order not found' });
+
+  // Payments belong to the order and must not survive its deletion.
+  await Payment.deleteMany({ order: order._id, user: userId });
+  await Order.deleteOne({ _id: order._id, user: userId });
+
+  res.json({ message: 'Order and related payments deleted', id: order._id });
 });
 
 module.exports = router;
