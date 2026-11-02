@@ -1,0 +1,5 @@
+# Water Plant Business Manager
+
+node_modules/
+.env
+dist/
