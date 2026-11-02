@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
-import { ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import '../styles/auth.css';
 import logo from '../assets/logo.png';
 
@@ -14,6 +14,7 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [step, setStep] = useState(1);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -33,6 +34,18 @@ export default function Register() {
   };
 
   const f = (field) => ({ value: form[field], onChange: e => setForm({ ...form, [field]: e.target.value }) });
+
+  const goToBusinessDetails = () => {
+    if (!form.name.trim() || !form.email.trim() || !form.password) {
+      toast.error('Complete all personal details');
+      return;
+    }
+    if (form.password.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+    setStep(2);
+  };
 
   return (
     <div className="auth-page">
@@ -60,49 +73,70 @@ export default function Register() {
             <p>Tell us a little about you and your business.</p>
           </div>
 
+          <div className="register-stepper" aria-label="Registration steps">
+            <div className={`register-step${step === 1 ? ' active' : ' complete'}`}>
+              <span>1</span>
+              <b>Personal details</b>
+            </div>
+            <div className="register-step-line" />
+            <div className={`register-step${step === 2 ? ' active' : ''}`}>
+              <span>2</span>
+              <b>Business details</b>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="auth-form register-form">
-            <div className="auth-section-label">Your details</div>
-            <div className="form-grid-2">
-              <div className="form-group">
-                <label className="form-label" htmlFor="register-name">Your name <span>*</span></label>
-                <input id="register-name" className="form-input" placeholder="John Kumar" {...f('name')} required autoComplete="name" />
-              </div>
-              <div className="form-group">
-                <label className="form-label" htmlFor="register-email">Email address <span>*</span></label>
-                <input id="register-email" className="form-input" type="email" placeholder="you@business.com" {...f('email')} required autoComplete="email" />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="register-password">Password <span>*</span></label>
-              <div className="auth-input-wrap">
-                <input id="register-password" className="form-input" type={showPass ? 'text' : 'password'} placeholder="At least 8 characters" {...f('password')} required minLength={8} autoComplete="new-password" />
-                <button className="auth-visibility" type="button" onClick={() => setShowPass(!showPass)} aria-label={showPass ? 'Hide password' : 'Show password'}>{showPass ? <EyeOff size={17} /> : <Eye size={17} />}</button>
-              </div>
-            </div>
-
-            <div className="auth-section-label auth-section-business">Business details</div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="register-business">Business name <span>*</span></label>
-              <input id="register-business" className="form-input" placeholder="Manjeera Beverages" {...f('businessName')} required autoComplete="organization" />
-            </div>
-            <div className="form-grid-2">
-              <div className="form-group">
-                <label className="form-label" htmlFor="register-phone">Phone number</label>
-                <input id="register-phone" className="form-input" placeholder="+91 9999 999999" {...f('phone')} autoComplete="tel" />
-              </div>
-              <div className="form-group">
-                <label className="form-label" htmlFor="register-upi">UPI ID</label>
-                <input id="register-upi" className="form-input" placeholder="yourname@upi" {...f('upiId')} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="register-fssai">FSSAI registration number <span className="optional">(optional)</span></label>
-              <input id="register-fssai" className="form-input" placeholder="23626019000558" {...f('fssaiNo')} />
-            </div>
-
-            <button className="auth-submit" type="submit" disabled={loading}>
-              {loading ? 'Creating workspace...' : <>Create workspace <ArrowRight size={17} /></>}
-            </button>
+            {step === 1 ? (
+              <>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="register-name">Name <span>*</span></label>
+                  <input id="register-name" className="form-input" {...f('name')} required autoComplete="name" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="register-email">Email <span>*</span></label>
+                  <input id="register-email" className="form-input" type="email" {...f('email')} required autoComplete="email" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="register-password">Password <span>*</span></label>
+                  <div className="auth-input-wrap">
+                    <input id="register-password" className="form-input" type={showPass ? 'text' : 'password'} {...f('password')} required minLength={8} autoComplete="new-password" />
+                    <button className="auth-visibility" type="button" onClick={() => setShowPass(!showPass)} aria-label={showPass ? 'Hide password' : 'Show password'}>{showPass ? <EyeOff size={17} /> : <Eye size={17} />}</button>
+                  </div>
+                </div>
+                <button className="auth-submit" type="button" onClick={goToBusinessDetails}>
+                  Next <ArrowRight size={17} />
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="register-business">Business name <span>*</span></label>
+                  <input id="register-business" className="form-input" {...f('businessName')} required autoComplete="organization" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="register-phone">Phone</label>
+                  <input id="register-phone" className="form-input" type="tel" {...f('phone')} autoComplete="tel" />
+                </div>
+                <div className="form-grid-2">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="register-upi">UPI ID</label>
+                    <input id="register-upi" className="form-input" {...f('upiId')} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="register-fssai">FSSAI number</label>
+                    <input id="register-fssai" className="form-input" {...f('fssaiNo')} />
+                  </div>
+                </div>
+                <div className="register-actions">
+                  <button className="auth-back" type="button" onClick={() => setStep(1)} disabled={loading}>
+                    <ArrowLeft size={17} /> Back
+                  </button>
+                  <button className="auth-submit" type="submit" disabled={loading}>
+                    {loading ? 'Creating...' : <>Create account <ArrowRight size={17} /></>}
+                  </button>
+                </div>
+              </>
+            )}
           </form>
 
           <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>

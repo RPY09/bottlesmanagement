@@ -387,6 +387,83 @@
   gap: 0.85rem;
 }
 
+.register-stepper {
+  display: flex;
+  align-items: center;
+  margin: 0 0 1.5rem;
+}
+
+.register-step {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.register-step span {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #D7E2EC;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.register-step.active,
+.register-step.complete {
+  color: var(--palette-ocean-blue);
+}
+
+.register-step.active span,
+.register-step.complete span {
+  border-color: var(--palette-ocean-blue);
+  background: var(--palette-ocean-blue);
+  color: #FFFFFF;
+}
+
+.register-step-line {
+  flex: 1;
+  height: 1px;
+  margin: 0 0.7rem;
+  background: #D7E2EC;
+}
+
+.register-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.register-actions .auth-submit {
+  flex: 1;
+}
+
+.auth-back {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0 1rem;
+  border: 1px solid #D7E2EC;
+  border-radius: 11px;
+  background: #FFFFFF;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-back:hover:not(:disabled) {
+  border-color: var(--palette-ocean-blue);
+  color: var(--palette-ocean-blue);
+}
+
 @media (max-width: 760px) {
   .auth-page {
     min-height: 100dvh;
@@ -436,6 +513,10 @@
   .form-grid-2 {
     grid-template-columns: 1fr;
     gap: 0.85rem;
+  }
+
+  .register-step {
+    font-size: 0.65rem;
   }
 }
 

@@ -284,7 +284,7 @@ export default function Layout() {
         {/* Main Menu Links */}
         <nav className="hbm-sidebar-nav">
           <div className="hbm-nav-section-title">Main Menu</div>
-          {mainNavItems.filter(({ to }) => !bottomNavPaths.includes(to)).map(({ label, icon: Icon, to }) => (
+          {mainNavItems.map(({ label, icon: Icon, to }) => (
             <NavLink
               key={to}
               to={to}
@@ -653,7 +653,7 @@ export default function Layout() {
               </div>
 
               {/* Navigation Links */}
-              {mainNavItems.map(({ label, icon: Icon, to }) => (
+              {mainNavItems.filter(({ to }) => !bottomNavPaths.includes(to)).map(({ label, icon: Icon, to }) => (
                 <NavLink
                   key={to}
                   to={to}
