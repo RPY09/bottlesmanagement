@@ -1,15 +1,639 @@
-/* ─── Settings Grids (Desktop) ─── */
-.product-add-grid {
-  display: grid;
-  grid-template-columns: 2fr 1.2fr 1fr 1.2fr auto;
+/* ═══════════════════════════════════════════════════════════════════
+   HYDRO BUSINESS MANAGER — SETTINGS & CONFIGURATION
+   Ocean Blue Design System · Prefix: .set-*
+   ═══════════════════════════════════════════════════════════════════ */
+
+.set-page {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #172033;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: calc(72px + 2.5rem);
+}
+
+/* ─── 1. Header ─── */
+.set-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.set-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.set-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #03045E;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.set-subtitle {
+  font-size: 0.85rem;
+  color: #64748B;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ─── 2. Generic Card Container ─── */
+.set-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  transition: box-shadow 0.18s ease;
+}
+
+.set-card:hover {
+  box-shadow: 0 4px 14px -3px rgba(3, 4, 94, 0.06);
+}
+
+.set-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 0.75rem;
-  align-items: flex-end;
-  margin-bottom: 1.5rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #F1F5F9;
 }
 
-.settings-profile-grid {
+.set-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.set-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.set-card-icon.blue  { background: rgba(2, 119, 182, 0.1); color: #0277B6; }
+.set-card-icon.navy  { background: rgba(3, 4, 94, 0.08); color: #03045E; }
+.set-card-icon.green { background: rgba(21, 128, 61, 0.1); color: #15803D; }
+
+.set-card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #03045E;
+  margin: 0;
+}
+
+.set-card-sub {
+  font-size: 0.76rem;
+  color: #64748B;display: none;
+  margin-top: 0.15rem;
+}
+
+/* ─── 3. Products & Prices Section ─── */
+
+/* Desktop Entry Form */
+.set-prod-form-desktop {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .set-prod-form-desktop {
+    display: grid;
+    grid-template-columns: 2.2fr 1.3fr 1.1fr 1.3fr auto;
+    gap: 0.75rem;
+    align-items: flex-end;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+  }
+}
+
+/* Mobile Entry Form */
+.set-prod-form-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .set-prod-form-mobile {
+    display: none;
+  }
+}
+
+/* Common form elements */
+.set-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.set-form-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.set-form-label-hint {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #94A3B8;
+}
+
+.set-form-input,
+.set-form-select,
+.set-form-textarea {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.86rem;
+  font-family: inherit;
+  color: #172033;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.set-form-input:focus,
+.set-form-select:focus,
+.set-form-textarea:focus {
+  border-color: #0277B6;
+  box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
+  background: #FFFFFF;
+}
+
+.set-form-grid-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
 }
 
+/* Calculated Case Price Tag */
+.set-case-price-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #15803D;
+  background: #E8F5EC;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  align-self: flex-start;
+  margin-top: 0.15rem;
+}
+
+/* Add / Update Product Buttons */
+.set-btn-add-prod {
+  background: #0277B6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  box-shadow: 0 2px 5px rgba(2, 119, 182, 0.25);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  height: 40px;
+}
+
+.set-btn-add-prod:hover {
+  background: #025E91;
+  transform: translateY(-1px);
+}
+
+.set-btn-add-prod:active {
+  transform: scale(0.98);
+}
+
+.set-btn-add-prod:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.set-btn-cancel-edit {
+  background: #F1F5F9;
+  color: #475569;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 40px;
+  transition: background 0.15s;
+}
+
+.set-btn-cancel-edit:hover {
+  background: #E2E8F0;
+}
+
+/* ─── 4. Desktop Product Table (>= 1024px) ─── */
+.set-desktop-only {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .set-desktop-only {
+    display: block;
+  }
+}
+
+.set-table-wrapper {
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.set-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.set-table th {
+  background: #F8FAFC;
+  color: #64748B;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #E2E8F0;
+  white-space: nowrap;
+}
+
+.set-table th.right,
+.set-table td.right {
+  text-align: right;
+}
+
+.set-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #F1F5F9;
+  color: #172033;
+  vertical-align: middle;
+}
+
+.set-table tr:last-child td {
+  border-bottom: none;
+}
+
+.set-table tr:hover td {
+  background: #F8FAFC;
+}
+
+.set-table tr.archived td {
+  opacity: 0.55;
+  background: #F8FAFC;
+}
+
+/* Size badge */
+.set-size-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0277B6;
+  background: rgba(2, 119, 182, 0.09);
+  padding: 0.18rem 0.5rem;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+
+.set-status-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.set-status-pill.active   { background: #E8F5EC; color: #15803D; }
+.set-status-pill.archived { background: #F1F5F9; color: #64748B; }
+
+.set-table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.set-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.set-action-btn:hover {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #0277B6;
+}
+
+.set-action-btn.archive:hover {
+  background: rgba(217, 119, 6, 0.1);
+  color: #D97706;
+}
+
+.set-action-btn.delete:hover {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* ─── 5. Mobile Product Cards (< 1024px) ─── */
+.set-mobile-only {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .set-mobile-only {
+    display: none;
+  }
+}
+
+.set-prod-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.set-prod-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.set-prod-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.set-prod-card.archived {
+  opacity: 0.65;
+  background: #F8FAFC;
+}
+
+.set-prod-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.set-prod-card-name {
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: #03045E;
+}
+
+.set-prod-card-price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #172033;
+}
+
+.set-prod-card-meta {
+  font-size: 0.76rem;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.set-prod-card-case {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #15803D;
+  background: #E8F5EC;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  align-self: flex-start;
+}
+
+.set-prod-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.45rem;
+  border-top: 1px dashed #F1F5F9;
+  margin-top: 0.2rem;
+}
+
+.set-card-action-link {
+  background: transparent;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0277B6;
+  cursor: pointer;
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.15s;
+}
+
+.set-card-action-link:hover {
+  background: rgba(2, 119, 182, 0.08);
+}
+
+.set-card-action-link.archive {
+  color: #D97706;
+}
+
+.set-card-action-link.archive:hover {
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.set-card-action-link.delete {
+  color: #DC2626;
+}
+
+.set-card-action-link.delete:hover {
+  background: #FEE2E2;
+}
+
+/* ─── 6. Personal & Business Information Grid ─── */
+.set-profiles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .set-profiles-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* Profile Avatar Header */
+.set-avatar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+}
+
+.set-avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #03045E 0%, #0277B6 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(3, 4, 94, 0.2);
+}
+
+.set-avatar-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.set-avatar-name {
+  font-weight: 800;
+  font-size: 0.96rem;
+  color: #03045E;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.set-avatar-email {
+  font-size: 0.76rem;
+  color: #64748B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Form Actions */
+.set-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.set-btn-save {
+  background: #0277B6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 2px 5px rgba(2, 119, 182, 0.25);
+  transition: all 0.15s ease;
+}
+
+.set-btn-save:hover {
+  background: #025E91;
+  transform: translateY(-1px);
+}
+
+.set-btn-save:active {
+  transform: scale(0.98);
+}
+
+.set-btn-save:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.set-unsaved-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #D97706;
+  background: rgba(217, 119, 6, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Validation error text */
+.set-error-text {
+  font-size: 0.72rem;
+  color: #DC2626;
+  font-weight: 600;
+  margin-top: 0.1rem;
+}
+
+/* ─── 7. Accessibility: Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .set-card,
+  .set-prod-card,
+  .set-btn-add-prod,
+  .set-btn-save {
+    transition: none;
+    transform: none;
+  }
+}

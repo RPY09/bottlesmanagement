@@ -8,8 +8,10 @@ const userSchema = new mongoose.Schema({
   businessName: { type: String, default: 'Manjeera Beverages' },
   fssaiNo: { type: String },
   phone: { type: String },
+  businessPhone: { type: String },
   upiId: { type: String },
   address: { type: String },
+  logo: { type: String },
 }, { timestamps: true });
 
 userSchema.pre('save', async function () {

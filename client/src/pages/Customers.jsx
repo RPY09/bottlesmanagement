@@ -1477,6 +1477,9 @@ export default function Customers() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const customerLoaderRef = useRef(null);
   const [modal, setModal] = useState(null);       // null | 'add' | customer (edit)
   const [detail, setDetail] = useState(null);     // customer object for detail panel
 
@@ -1488,18 +1491,30 @@ export default function Customers() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (requestedPage = 1) => {
     setLoading(true);
     try {
-      const params = {};
+      const params = { page: requestedPage, limit: 24 };
       if (search) params.search = search;
       const { data } = await api.get('/customers', { params });
-      setCustomers(data);
+      const items = data.items || data;
+      setCustomers(prev => requestedPage === 1 ? items : [...prev, ...items]);
+      setPage(requestedPage);
+      setHasNextPage(Boolean(data.pagination?.hasNextPage));
     } catch { toast.error('Failed to load customers'); }
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchCustomers(); }, [search]);
+  useEffect(() => { fetchCustomers(1); }, [search]);
+
+  useEffect(() => {
+    if (!hasNextPage || loading || !customerLoaderRef.current) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) fetchCustomers(page + 1);
+    }, { rootMargin: '220px' });
+    observer.observe(customerLoaderRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, loading, page, search]);
 
   useEffect(() => {
     const handleGlobalCustomer = (e) => {
@@ -1749,6 +1764,7 @@ export default function Customers() {
             })}
           </div>
         )}
+        {hasNextPage && <div ref={customerLoaderRef} className="loading-page" style={{ minHeight: 56 }}><div className="loading-spinner" /></div>}
       </div>
 
       {/* Add/Edit Modal */}
@@ -1771,4 +1787,3 @@ export default function Customers() {
     </div>
   );
 }
-

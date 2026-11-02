@@ -681,6 +681,7 @@ export default function Payments() {
   const [loading, setLoading] = useState(true);
 
   // Search & Filter state
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [modeFilter, setModeFilter] = useState('');
 
@@ -690,6 +691,11 @@ export default function Payments() {
   const [paymentToDelete, setPaymentToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(searchInput), 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     Promise.all([api.get('/payments'), api.get('/orders'), api.get('/customers')])
@@ -790,14 +796,14 @@ export default function Payments() {
           <input
             className="payments-search-input"
             placeholder="Search by customer or order ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
           {search && (
             <button
               type="button"
               className="payments-search-clear"
-              onClick={() => setSearch('')}
+              onClick={() => setSearchInput('')}
               aria-label="Clear search"
             >
               <X size={15} />

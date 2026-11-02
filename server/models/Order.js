@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 
 const BOTTLES_PER_CASE = 12;
 
 const orderLineSchema = new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  productName: { type: String }, // snapshot at time of order
-  size: { type: String },        // snapshot
+  productName: { type: String },
+  size: { type: String },
   cases: { type: Number, required: true, min: 1 },
   bottlesPerCase: { type: Number, default: BOTTLES_PER_CASE },
-  pricePerBottle: { type: Number, required: true }, // snapshot at time of order
-  subtotal: { type: Number, required: true },        // cases * 12 * pricePerBottle
+  pricePerBottle: { type: Number, required: true },
+  subtotal: { type: Number, required: true },
 }, { _id: false });
 
 const orderSchema = new mongoose.Schema({
@@ -27,7 +27,12 @@ const orderSchema = new mongoose.Schema({
   reminderSentAt: { type: Date },
 }, { timestamps: true });
 
-// Auto-generate order number
+orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ user: 1, status: 1, paymentStatus: 1, createdAt: -1 });
+orderSchema.index({ user: 1, customer: 1, createdAt: -1 });
+orderSchema.index({ user: 1, orderNumber: 1 });
+orderSchema.index({ user: 1, reminderSent: 1, status: 1, paymentStatus: 1, createdAt: -1 });
+
 orderSchema.pre('save', async function () {
   if (!this.orderNumber) {
     const count = await mongoose.model('Order').countDocuments({ user: this.user });

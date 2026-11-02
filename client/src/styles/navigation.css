@@ -455,13 +455,25 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--hbm-ocean) 0%, var(--hbm-aqua) 100%);
-  color: #FFFFFF;
+  background: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(2, 119, 182, 0.25);
+  overflow: hidden;
+}
+
+.hbm-mobile-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.hbm-brand-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .hbm-mobile-logo-text {

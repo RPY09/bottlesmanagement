@@ -541,15 +541,47 @@ function QuickPaymentModal({ order, onClose, onPaid }) {
 /* ─── Searchable Customer Selection Bottom Sheet ─── */
 function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose, onAddNew }) {
   const [search, setSearch] = useState('');
+  const [customerItems, setCustomerItems] = useState(customers);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const loaderRef = useRef(null);
 
-  const filtered = customers.filter(c => {
-    const q = search.toLowerCase().trim();
-    if (!q) return true;
-    const nameMatch = c.name?.toLowerCase().includes(q);
-    const phoneMatch = c.phone?.toLowerCase().includes(q);
-    const addrMatch = c.address?.toLowerCase().includes(q);
-    return nameMatch || phoneMatch || addrMatch;
-  });
+  const fetchCustomers = useCallback(async (requestedPage, append, query) => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/customers', {
+        params: { page: requestedPage, limit: 25, search: query || undefined },
+      });
+      const items = data.items || data;
+      setCustomerItems(prev => append ? [...prev, ...items] : items);
+      setPage(requestedPage);
+      setHasNextPage(Boolean(data.pagination?.hasNextPage));
+    } catch {
+      toast.error('Failed to load customers');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchCustomers(1, false, search.trim());
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [fetchCustomers, search]);
+
+  useEffect(() => {
+    const loader = loaderRef.current;
+    if (!loader || !hasNextPage) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !loading) {
+        fetchCustomers(page + 1, true, search.trim());
+      }
+    }, { rootMargin: '120px' });
+    observer.observe(loader);
+    return () => observer.disconnect();
+  }, [fetchCustomers, hasNextPage, loading, page, search]);
 
   return (
     <div className="om-nested-sheet-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -592,8 +624,8 @@ function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose,
 
         {/* Scrollable Customer List */}
         <div className="om-nested-list">
-          {filtered.length > 0 ? (
-            filtered.map(c => {
+          {customerItems.length > 0 ? (
+            customerItems.map(c => {
               const isSelected = String(c._id) === String(selectedCustomerId);
               const initials = c.name
                 ? c.name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()
@@ -620,7 +652,7 @@ function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose,
                 </div>
               );
             })
-          ) : (
+          ) : !loading ? (
             <div className="om-nested-empty">
               <User size={34} style={{ color: '#94A3B8' }} />
               <div style={{ fontWeight: 700, color: '#172033', marginTop: '0.4rem' }}>No customers found</div>
@@ -635,7 +667,9 @@ function CustomerSelectSheet({ customers, selectedCustomerId, onSelect, onClose,
                 <UserPlus size={15} /> Add New Customer
               </button>
             </div>
-          )}
+          ) : null}
+          {loading && <div className="om-nested-loading">Loading customers...</div>}
+          <div ref={loaderRef} style={{ height: 1 }} />
         </div>
 
         {/* Bottom Bar with Add New Customer */}
@@ -1381,6 +1415,8 @@ export default function Orders() {
   const PAGE_SIZE = 12;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [serverPage, setServerPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const loaderRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
@@ -1392,16 +1428,48 @@ export default function Orders() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  const fetchOrders = useCallback(async (requestedPage = 1, append = false) => {
+    const params = { page: requestedPage, limit: 24 };
+    if (filters.paymentStatus) params.paymentStatus = filters.paymentStatus;
+    if (filters.search) params.search = filters.search;
+    if (filters.dateMode === 'monthYear') {
+      params.startDate = dayjs(`${filters.year}-${filters.month}-01`).startOf('month').toISOString();
+      params.endDate = dayjs(`${filters.year}-${filters.month}-01`).endOf('month').toISOString();
+    } else if (filters.dateMode === 'range') {
+      if (filters.startDate) params.startDate = dayjs(filters.startDate).startOf('day').toISOString();
+      if (filters.endDate) params.endDate = dayjs(filters.endDate).endOf('day').toISOString();
+    }
+
+    try {
+      const { data } = await api.get('/orders', { params });
+      const items = data.items || data;
+      setOrders(prev => append ? [...prev, ...items] : items);
+      setServerPage(requestedPage);
+      setHasNextPage(Boolean(data.pagination?.hasNextPage));
+    } catch {
+      toast.error('Failed to load orders');
+    } finally {
+      setLoading(false);
+      setIsLoadingMore(false);
+    }
+  }, [filters.paymentStatus, filters.search, filters.dateMode, filters.month, filters.year, filters.startDate, filters.endDate]);
+
+  useEffect(() => {
+    setLoading(true);
+    setVisibleCount(PAGE_SIZE);
+    fetchOrders(1);
+  }, [fetchOrders]);
+
   useEffect(() => {
     Promise.all([
-      api.get('/orders'),
-      api.get('/customers'),
+      api.get('/customers', { params: { page: 1, limit: 25 } }),
       api.get('/products'),
-    ]).then(([o, c, p]) => {
-      setOrders(o.data);
-      setCustomers(c.data);
-      setProducts(p.data);
-    }).catch(() => toast.error('Failed to load orders')).finally(() => setLoading(false));
+    ])
+      .then(([c, p]) => {
+        setCustomers(c.data.items || c.data);
+        setProducts(p.data.items || p.data);
+      })
+      .catch(() => toast.error('Failed to load order form data'));
 
     const handleGlobalOrder = (e) => {
       if (e.detail) {
@@ -1443,7 +1511,7 @@ export default function Orders() {
     setVisibleCount(PAGE_SIZE);
   }, [filters.search, filters.paymentStatus, filters.dateMode, filters.month, filters.year, filters.startDate, filters.endDate]);
 
-  const hasMore = visibleCount < filtered.length;
+  const hasMore = hasNextPage || visibleCount < filtered.length;
   const displayedOrders = filtered.slice(0, visibleCount);
 
   // Infinite scroll intersection observer watching sentinel inside scroll container
@@ -1453,10 +1521,11 @@ export default function Orders() {
       (entries) => {
         if (entries[0]?.isIntersecting) {
           setIsLoadingMore(true);
-          setTimeout(() => {
+          if (hasNextPage) fetchOrders(serverPage + 1, true);
+          else {
             setVisibleCount(prev => prev + PAGE_SIZE);
             setIsLoadingMore(false);
-          }, 250);
+          }
         }
       },
       {
@@ -1469,7 +1538,7 @@ export default function Orders() {
       observer.observe(loaderRef.current);
     }
     return () => observer.disconnect();
-  }, [hasMore, isLoadingMore]);
+  }, [hasMore, isLoadingMore, hasNextPage, serverPage, fetchOrders]);
 
   // Container scroll listener fallback to load more orders when nearing bottom of scroll container
   useEffect(() => {
@@ -1481,16 +1550,17 @@ export default function Orders() {
       const remainingScroll = container.scrollHeight - container.scrollTop - container.clientHeight;
       if (remainingScroll < 220) {
         setIsLoadingMore(true);
-        setTimeout(() => {
+        if (hasNextPage) fetchOrders(serverPage + 1, true);
+        else {
           setVisibleCount(prev => prev + PAGE_SIZE);
           setIsLoadingMore(false);
-        }, 250);
+        }
       }
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
-  }, [hasMore, isLoadingMore]);
+  }, [hasMore, isLoadingMore, hasNextPage, serverPage, fetchOrders]);
 
   const handleSave = (saved, mode) => {
     if (mode === 'add') {

@@ -11,6 +11,7 @@ const paymentRoutes = require('./routes/payments');
 const expenseRoutes = require('./routes/expenses');
 const dashboardRoutes = require('./routes/dashboard');
 const productRoutes = require('./routes/products');
+const reportRoutes = require('./routes/reports');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const { authenticate } = require('./middleware/auth');
@@ -54,6 +55,7 @@ app.use('/api/orders', authenticate, orderRoutes);
 app.use('/api/payments', authenticate, paymentRoutes);
 app.use('/api/expenses', authenticate, expenseRoutes);
 app.use('/api/products', authenticate, productRoutes);
+app.use('/api/reports', authenticate, reportRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'OK', timestamp: new Date() }));

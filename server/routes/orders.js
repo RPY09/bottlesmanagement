@@ -1,43 +1,90 @@
-const express = require('express');
+﻿const express = require('express');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Payment = require('../models/Payment');
+const Customer = require('../models/Customer');
 const router = express.Router();
 
 const BOTTLES_PER_CASE = 12;
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 25;
 
-// Get all orders
-router.get('/', async (req, res) => {
-  const { status, paymentStatus, customer, startDate, endDate } = req.query;
-  const query = { user: req.user.id };
-  if (status) query.status = status;
-  if (paymentStatus) query.paymentStatus = paymentStatus;
-  if (customer) query.customer = customer;
-  if (startDate || endDate) {
-    query.createdAt = {};
-    if (startDate) query.createdAt.$gte = new Date(startDate);
-    if (endDate) query.createdAt.$lte = new Date(endDate);
+const parsePage = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
+};
+
+const parseLimit = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed < 1) return DEFAULT_LIMIT;
+  return Math.min(parsed, MAX_LIMIT);
+};
+
+const escapeRegExp = (value = '') => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+router.get('/', async (req, res, next) => {
+  try {
+    const { status, paymentStatus, customer, startDate, endDate, search, page, limit } = req.query;
+    const userId = req.user?._id || req.user?.id;
+    const query = { user: userId };
+
+    if (status) query.status = status;
+    if (paymentStatus) query.paymentStatus = paymentStatus;
+    if (customer) query.customer = customer;
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) query.createdAt.$gte = new Date(startDate);
+      if (endDate) query.createdAt.$lte = new Date(endDate);
+    }
+
+    if (search && search.trim()) {
+      const regex = new RegExp(escapeRegExp(search.trim()), 'i');
+      const customerIds = await Customer.find({ user: userId, name: regex }).select('_id').lean();
+      query.$or = [
+        { orderNumber: regex },
+        { notes: regex },
+        { 'lines.productName': regex },
+        ...(customerIds.length ? [{ customer: { $in: customerIds.map(({ _id }) => _id) } }] : []),
+      ];
+    }
+
+    const hasPagination = Object.prototype.hasOwnProperty.call(req.query, 'page') || Object.prototype.hasOwnProperty.call(req.query, 'limit');
+    const baseQuery = Order.find(query)
+      .select('orderNumber customer lines totalAmount paidAmount paymentStatus status createdAt notes')
+      .populate('customer', 'name phone address')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (!hasPagination) {
+      const orders = await baseQuery;
+      return res.json(orders);
+    }
+
+    const safePage = parsePage(page);
+    const safeLimit = parseLimit(limit);
+    const skip = (safePage - 1) * safeLimit;
+    const [orders, total] = await Promise.all([
+      baseQuery.skip(skip).limit(safeLimit),
+      Order.countDocuments(query),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / safeLimit));
+    return res.json({ items: orders, pagination: { page: safePage, limit: safeLimit, total, totalPages, hasNextPage: safePage < totalPages } });
+  } catch (err) {
+    return next(err);
   }
-  const orders = await Order.find(query)
-    .populate('customer', 'name phone address')
-    .sort({ createdAt: -1 });
-  res.json(orders);
 });
 
-// Get single order
 router.get('/:id', async (req, res) => {
-  const order = await Order.findOne({ _id: req.params.id, user: req.user.id })
-    .populate('customer');
+  const order = await Order.findOne({ _id: req.params.id, user: req.user.id }).populate('customer');
   if (!order) return res.status(404).json({ message: 'Order not found' });
   const payments = await Payment.find({ order: req.params.id });
   res.json({ order, payments });
 });
 
-// Create order
 router.post('/', async (req, res) => {
   const { customer, lines, status, deliveryDate, notes, paymentStatus, paidAmount, paymentMode } = req.body;
 
-  // Resolve product prices and build line snapshots (allow admin price override)
   const resolvedLines = await Promise.all(lines.map(async (line) => {
     const product = await Product.findOne({ _id: line.product, user: req.user.id });
     if (!product) throw Object.assign(new Error(`Product not found: ${line.product}`), { statusCode: 400 });
@@ -91,7 +138,6 @@ router.post('/', async (req, res) => {
   res.status(201).json(order);
 });
 
-// Quick Mark Order as Paid
 router.patch('/:id/pay', async (req, res) => {
   const { mode = 'cash', reference = '' } = req.body;
   const order = await Order.findOne({ _id: req.params.id, user: req.user.id });
@@ -121,7 +167,6 @@ router.patch('/:id/pay', async (req, res) => {
   res.json(order);
 });
 
-// Update order
 router.put('/:id', async (req, res) => {
   const { lines, ...rest } = req.body;
   let update = { ...rest };
@@ -159,17 +204,53 @@ router.put('/:id', async (req, res) => {
   res.json(order);
 });
 
-// Pending orders for reminders
-router.get('/pending/reminders', async (req, res) => {
-  const orders = await Order.find({
-    user: req.user.id,
-    paymentStatus: { $in: ['unpaid', 'partial'] },
-    status: 'delivered',
-  }).populate('customer', 'name phone email');
-  res.json(orders);
+router.get('/pending/reminders', async (req, res, next) => {
+  try {
+    const { search, page, limit } = req.query;
+    const userId = req.user?._id || req.user?.id;
+    const query = {
+      user: userId,
+      paymentStatus: { $in: ['unpaid', 'partial'] },
+      status: 'delivered',
+    };
+
+    if (search && search.trim()) {
+      const regex = new RegExp(escapeRegExp(search.trim()), 'i');
+      const customerIds = await Customer.find({ user: userId, name: regex }).select('_id').lean();
+      query.$or = [
+        { orderNumber: regex },
+        { notes: regex },
+        ...(customerIds.length ? [{ customer: { $in: customerIds.map(({ _id }) => _id) } }] : []),
+      ];
+    }
+
+    const hasPagination = Object.prototype.hasOwnProperty.call(req.query, 'page') || Object.prototype.hasOwnProperty.call(req.query, 'limit');
+    const baseQuery = Order.find(query)
+      .select('orderNumber customer totalAmount paidAmount paymentStatus status createdAt deliveryDate notes reminderSent reminderSentAt')
+      .populate('customer', 'name phone email')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (!hasPagination) {
+      const orders = await baseQuery;
+      return res.json(orders);
+    }
+
+    const safePage = parsePage(page);
+    const safeLimit = parseLimit(limit);
+    const skip = (safePage - 1) * safeLimit;
+    const [orders, total] = await Promise.all([
+      baseQuery.skip(skip).limit(safeLimit),
+      Order.countDocuments(query),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / safeLimit));
+    return res.json({ items: orders, pagination: { page: safePage, limit: safeLimit, total, totalPages, hasNextPage: safePage < totalPages } });
+  } catch (err) {
+    return next(err);
+  }
 });
 
-// Mark reminder sent
 router.patch('/:id/reminder', async (req, res) => {
   const order = await Order.findOneAndUpdate(
     { _id: req.params.id, user: req.user.id },
@@ -179,7 +260,6 @@ router.patch('/:id/reminder', async (req, res) => {
   res.json(order);
 });
 
-// Delete order
 router.delete('/:id', async (req, res) => {
   await Order.findOneAndDelete({ _id: req.params.id, user: req.user.id });
   res.json({ message: 'Order deleted' });

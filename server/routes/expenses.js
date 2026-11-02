@@ -1,46 +1,79 @@
-const express = require('express');
+﻿const express = require('express');
 const Expense = require('../models/Expense');
 const router = express.Router();
 
-// Get all expenses with filtering & search
-router.get('/', async (req, res) => {
-  const { category, startDate, endDate, search, paymentMode, status } = req.query;
-  const userId = req.user._id || req.user.id;
-  const query = { user: userId };
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 25;
 
-  if (category && category !== 'all') {
-    query.category = new RegExp(`^${category.trim()}$`, 'i');
-  }
+const parsePage = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
+};
 
-  if (paymentMode && paymentMode !== 'all') {
-    query.paymentMode = paymentMode.toLowerCase();
-  }
+const parseLimit = (value) => {
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed < 1) return DEFAULT_LIMIT;
+  return Math.min(parsed, MAX_LIMIT);
+};
 
-  if (status && status !== 'all') {
-    query.status = status.toLowerCase();
-  }
+const escapeRegExp = (value = '') => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  if (startDate || endDate) {
-    query.date = {};
-    if (startDate) {
-      query.date.$gte = new Date(`${startDate}T00:00:00.000Z`);
+router.get('/', async (req, res, next) => {
+  try {
+    const { category, startDate, endDate, search, paymentMode, status, page, limit } = req.query;
+    const userId = req.user?._id || req.user?.id;
+    const query = { user: userId };
+
+    if (category && category !== 'all') {
+      query.category = new RegExp(`^${escapeRegExp(category.trim())}$`, 'i');
     }
-    if (endDate) {
-      query.date.$lte = new Date(`${endDate}T23:59:59.999Z`);
+
+    if (paymentMode && paymentMode !== 'all') {
+      query.paymentMode = paymentMode.toLowerCase();
     }
-  }
 
-  if (search && search.trim()) {
-    const s = search.trim();
-    const regex = new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-    query.$or = [{ description: regex }, { vendor: regex }, { notes: regex }];
-  }
+    if (status && status !== 'all') {
+      query.status = status.toLowerCase();
+    }
 
-  const expenses = await Expense.find(query).sort({ date: -1 }).lean();
-  res.json(expenses);
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) query.date.$gte = new Date(`${startDate}T00:00:00.000Z`);
+      if (endDate) query.date.$lte = new Date(`${endDate}T23:59:59.999Z`);
+    }
+
+    if (search && search.trim()) {
+      const s = search.trim();
+      const regex = new RegExp(escapeRegExp(s), 'i');
+      query.$or = [{ description: regex }, { vendor: regex }, { notes: regex }, { category: regex }, { paymentMode: regex }];
+    }
+
+    const hasPagination = Object.prototype.hasOwnProperty.call(req.query, 'page') || Object.prototype.hasOwnProperty.call(req.query, 'limit');
+    const baseQuery = Expense.find(query)
+      .select('description vendor category amount date paymentMode status notes createdAt')
+      .sort({ date: -1 })
+      .lean();
+
+    if (!hasPagination) {
+      const expenses = await baseQuery;
+      return res.json(expenses);
+    }
+
+    const safePage = parsePage(page);
+    const safeLimit = parseLimit(limit);
+    const skip = (safePage - 1) * safeLimit;
+    const [expenses, total] = await Promise.all([
+      baseQuery.skip(skip).limit(safeLimit),
+      Expense.countDocuments(query),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / safeLimit));
+    return res.json({ items: expenses, pagination: { page: safePage, limit: safeLimit, total, totalPages, hasNextPage: safePage < totalPages } });
+  } catch (err) {
+    return next(err);
+  }
 });
 
-// Get single expense
 router.get('/:id', async (req, res) => {
   const userId = req.user._id || req.user.id;
   const expense = await Expense.findOne({ _id: req.params.id, user: userId }).lean();
@@ -48,34 +81,21 @@ router.get('/:id', async (req, res) => {
   res.json(expense);
 });
 
-// Create expense
 router.post('/', async (req, res) => {
   const userId = req.user._id || req.user.id;
-  const expense = await Expense.create({
-    ...req.body,
-    amount: parseFloat(req.body.amount),
-    user: userId,
-  });
+  const expense = await Expense.create({ ...req.body, amount: parseFloat(req.body.amount), user: userId });
   res.status(201).json(expense);
 });
 
-// Update expense
 router.put('/:id', async (req, res) => {
   const userId = req.user._id || req.user.id;
   const updateData = { ...req.body };
-  if (updateData.amount !== undefined) {
-    updateData.amount = parseFloat(updateData.amount);
-  }
-  const expense = await Expense.findOneAndUpdate(
-    { _id: req.params.id, user: userId },
-    updateData,
-    { returnDocument: 'after', runValidators: true }
-  );
+  if (updateData.amount !== undefined) updateData.amount = parseFloat(updateData.amount);
+  const expense = await Expense.findOneAndUpdate({ _id: req.params.id, user: userId }, updateData, { returnDocument: 'after', runValidators: true });
   if (!expense) return res.status(404).json({ message: 'Expense not found' });
   res.json(expense);
 });
 
-// Delete expense
 router.delete('/:id', async (req, res) => {
   const userId = req.user._id || req.user.id;
   const expense = await Expense.findOneAndDelete({ _id: req.params.id, user: userId });
@@ -83,7 +103,6 @@ router.delete('/:id', async (req, res) => {
   res.json({ message: 'Expense deleted', id: req.params.id });
 });
 
-// Summary by category (used by Reports.jsx)
 router.get('/summary/by-category', async (req, res) => {
   const userId = req.user._id || req.user.id;
   const { month, year } = req.query;

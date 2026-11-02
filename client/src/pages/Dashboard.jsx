@@ -536,34 +536,32 @@ export default function Dashboard() {
       <div className="dash-dues-card">
         <div className="dash-card-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div className="dash-icon-badge red"><AlertCircle size={15} /></div>
+            <div className="dash-icon-badge red"><AlertCircle size={15} strokeWidth={2.4} /></div>
             <div>
               <div className="dash-card-title">Pending Payment Dues</div>
-              <div className="dash-card-sub">1-click WhatsApp reminders</div>
+              <div className="dash-card-sub">Follow up before balances become overdue</div>
             </div>
           </div>
-          <Link to="/orders" className="dash-card-link">View All <ChevronRight size={13} /></Link>
+          <Link to="/orders" className="dash-card-link">View all <ChevronRight size={13} /></Link>
         </div>
 
         {/* Summary stats row */}
-        {(pendingDues?.totalOutstanding || 0) > 0 && (
-          <div className="dash-dues-stats">
-            <div className="dash-dues-stat">
-              <div className="dash-dues-stat-val">{fmt(pendingDues.totalOutstanding)}</div>
-              <div className="dash-dues-stat-lbl">Total Outstanding</div>
-            </div>
-            <div className="dash-dues-stat-sep" />
-            <div className="dash-dues-stat">
-              <div className="dash-dues-stat-val">{pendingDues.customerCount}</div>
-              <div className="dash-dues-stat-lbl">Customers</div>
-            </div>
-            <div className="dash-dues-stat-sep" />
-            <div className="dash-dues-stat">
-              <div className="dash-dues-stat-val">{pendingDues.unpaidOrderCount}</div>
-              <div className="dash-dues-stat-lbl">Orders</div>
-            </div>
+        <div className="dash-dues-stats">
+          <div className="dash-dues-stat">
+            <div className="dash-dues-stat-val">{fmt(pendingDues?.totalOutstanding)}</div>
+            <div className="dash-dues-stat-lbl">Total outstanding</div>
           </div>
-        )}
+          <div className="dash-dues-stat-sep" />
+          <div className="dash-dues-stat">
+            <div className="dash-dues-stat-val">{pendingDues?.customerCount || 0}</div>
+            <div className="dash-dues-stat-lbl">Customers</div>
+          </div>
+          <div className="dash-dues-stat-sep" />
+          <div className="dash-dues-stat">
+            <div className="dash-dues-stat-val">{pendingDues?.unpaidOrderCount || 0}</div>
+            <div className="dash-dues-stat-lbl">Orders</div>
+          </div>
+        </div>
 
         {pendingDues?.topDues?.length > 0 ? (
           <div>

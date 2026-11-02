@@ -28,6 +28,7 @@ import toast from 'react-hot-toast';
 import { OrderModal, WhatsAppModal } from '../pages/Orders';
 import { CustomerModal } from '../pages/Customers';
 import '../styles/navigation.css';
+import logo from '../assets/logo.png';
 
 /* ─── Navigation Route Definitions ─── */
 const mainNavItems = [
@@ -261,7 +262,7 @@ export default function Layout() {
         <div className="hbm-sidebar-brand">
           <NavLink to="/" className="hbm-brand-link" title="Hydro Business Manager">
             <div className="hbm-brand-icon">
-              <Droplets size={22} strokeWidth={2.4} />
+              <img src={logo} alt="" className="hbm-brand-logo" />
             </div>
             <div className="hbm-brand-text">
               <span className="hbm-brand-title">
@@ -346,7 +347,7 @@ export default function Layout() {
             {/* Mobile Brand Logo */}
             <NavLink to="/" className="hbm-topbar-mobile-brand" title="Home">
               <div className="hbm-mobile-logo-icon">
-                <Droplets size={18} strokeWidth={2.4} />
+                <img src={logo} alt="" className="hbm-mobile-logo" />
               </div>
               <span className="hbm-mobile-logo-text">
                 {user?.businessName || 'Hydro'}

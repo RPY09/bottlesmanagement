@@ -639,6 +639,7 @@ export default function Expenses() {
   const [loading, setLoading] = useState(true);
 
   // Filters
+  const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [catFilter, setCatFilter] = useState('all');
   const [modeFilter, setModeFilter] = useState('all');
@@ -651,6 +652,11 @@ export default function Expenses() {
   const [detailExpense, setDetailExpense] = useState(null);
   const [deleteExpense, setDeleteExpense] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(searchInput), 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   // Fetch all expenses once on mount
   const fetchExpenses = useCallback(async () => {
@@ -897,14 +903,14 @@ export default function Expenses() {
             type="text"
             className="exp-search-input"
             placeholder="Search description, vendor, notes..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
           />
           {search && (
             <button
               type="button"
               className="exp-search-clear"
-              onClick={() => setSearch('')}
+              onClick={() => setSearchInput('')}
               aria-label="Clear search"
             >
               <X size={14} />

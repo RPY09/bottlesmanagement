@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Payment = require('../models/Payment');
 const Expense = require('../models/Expense');
@@ -166,7 +167,9 @@ async function getOverviewAgg(userId, start, end) {
 
 // ─── GET /api/dashboard/summary ──────────────────────────────────────────────
 router.get('/summary', async (req, res) => {
-  const userId = req.user._id;
+  res.set('Cache-Control', 'private, max-age=15, stale-while-revalidate=30');
+  // JWTs issued by auth routes store the user identifier as `id`.
+  const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
   const { period = 'today', startDate, endDate } = req.query;
 
   const { start, end, prevStart, prevEnd, label } = getPeriodBoundaries(period, startDate, endDate);
@@ -265,9 +268,24 @@ router.get('/summary', async (req, res) => {
   };
 
   const [recentOrders, recentPayments, recentExpenses] = await Promise.all([
-    Order.find({ user: userId }).populate('customer', 'name phone').sort({ createdAt: -1 }).limit(6),
-    Payment.find({ user: userId }).populate('customer', 'name').populate('order', 'orderNumber').sort({ date: -1 }).limit(5),
-    Expense.find({ user: userId }).sort({ date: -1 }).limit(5),
+    Order.find({ user: userId })
+      .select('_id orderNumber customer lines.cases totalAmount paymentStatus createdAt')
+      .populate('customer', 'name phone')
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .lean(),
+    Payment.find({ user: userId })
+      .select('_id customer order amount mode date')
+      .populate('customer', 'name')
+      .populate('order', 'orderNumber')
+      .sort({ date: -1 })
+      .limit(5)
+      .lean(),
+    Expense.find({ user: userId })
+      .select('_id description category amount date')
+      .sort({ date: -1 })
+      .limit(5)
+      .lean(),
   ]);
 
   res.json({
@@ -284,7 +302,7 @@ router.get('/summary', async (req, res) => {
 
 // ─── GET / (legacy — preserved for existing Dashboard.jsx and Reports.jsx) ───
 router.get('/', async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id || req.user._id;
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -383,7 +401,7 @@ router.get('/monthly-report', async (req, res) => {
   const m = parseInt(month) || new Date().getMonth() + 1;
   const start = new Date(y, m - 1, 1);
   const end = new Date(y, m, 0, 23, 59, 59);
-  const userId = req.user._id;
+  const userId = req.user.id || req.user._id;
 
   const orders = await Order.find({ user: userId, createdAt: { $gte: start, $lte: end } });
   const payments = await Payment.find({ user: userId, date: { $gte: start, $lte: end } });
