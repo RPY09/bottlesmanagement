@@ -1398,6 +1398,7 @@ export default function Orders() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteOrderId, setDeleteOrderId] = useState(null);
   const [modal, setModal] = useState(null); // 'new' or order object for edit
   const [payModal, setPayModal] = useState(null); // order object for quick payment
   const [whatsappOrder, setWhatsappOrder] = useState(null); // order object for WhatsApp confirmation
