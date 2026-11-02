@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { BarChart3, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import '../styles/reports.css';
 
 const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
 const PIE_COLORS = ['#3b82f6', '#06b6d4', '#f59e0b', '#ef4444', '#a855f7', '#22c55e', '#f97316'];

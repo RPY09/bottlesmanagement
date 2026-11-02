@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import dayjs from 'dayjs';
 import { MessageSquare, Phone, CheckCircle, Clock, Send } from 'lucide-react';
+import '../styles/reminders.css';
 
 const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
 

@@ -3,6 +3,7 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Save, User, Building2, Package, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import '../styles/settings.css';
 
 const SIZE_OPTIONS = ['250ml', '300ml', '500ml', '750ml', '1L', '2L', '20L Can'];
 

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { Droplets, Eye, EyeOff } from 'lucide-react';
+import '../styles/auth.css';
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });

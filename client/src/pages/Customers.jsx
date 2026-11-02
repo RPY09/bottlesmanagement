@@ -3,6 +3,7 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
+import '../styles/customers.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -10,7 +11,8 @@ import {
   Image, X, MessageCircle, IndianRupee, Package, Clock,
   Navigation, Crosshair, Check, Copy, ExternalLink,
   ChevronDown, ChevronUp, TrendingUp, CheckCircle2, AlertCircle,
-  Calendar, CreditCard, Sparkles, ChevronRight
+  Calendar, CreditCard, Sparkles, ChevronRight,
+  UserPlus, UserCheck, UploadCloud, Loader2
 } from 'lucide-react';
 
 /* ─── Interactive Map Location Picker (Leaflet + OpenStreetMap) ─── */
@@ -193,7 +195,7 @@ function MapLocationPicker({ initialAddress, onSelect, onClose }) {
   };
 
   return (
-    <div className="modal-overlay" style={{ zIndex: 1100 }} onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay" style={{ zIndex: 1200 }} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal modal-lg" style={{ maxWidth: 760, padding: '1.25rem' }}>
         <div className="modal-header" style={{ marginBottom: '1rem' }}>
           <div>
@@ -328,45 +330,33 @@ function AddressAutocomplete({ value, onChange, onOpenMap }) {
   }, []);
 
   return (
-    <div className="address-autocomplete-wrapper">
-      <div ref={wrapRef} style={{ position: 'relative', flex: 1 }}>
-        <input
-          className="form-input"
-          placeholder="Start typing address or landmark..."
+    <div className="cm-address-wrap" ref={wrapRef}>
+      <div className="cm-address-input-box">
+        <textarea
+          id="customer-address"
+          className="cm-address-textarea"
+          placeholder="Enter complete address or landmark..."
           value={value}
           onChange={handleChange}
           onFocus={() => (suggestions.length > 0 || (searched && value.length >= 3)) && setOpen(true)}
-          autoComplete="off"
+          rows={2}
         />
 
         {open && (
-          <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 999,
-            background: 'var(--bg-card)', border: '1px solid var(--border)',
-            borderRadius: 8, boxShadow: 'var(--shadow-md)', overflow: 'hidden',
-            marginTop: 4,
-          }}>
+          <div className="cm-address-dropdown">
             {suggestions.map((s) => (
               <div
                 key={s.place_id}
                 onMouseDown={() => pick(s)}
-                style={{
-                  padding: '0.6rem 0.9rem', cursor: 'pointer', fontSize: '0.82rem',
-                  borderBottom: '1px solid var(--border)', lineHeight: 1.4,
-                  display: 'flex', alignItems: 'flex-start', gap: '0.4rem',
-                  color: 'var(--text-primary)',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-card-hover)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                className="cm-address-item"
               >
-                <MapPin size={13} style={{ color: 'var(--accent-blue)', marginTop: 2, flexShrink: 0 }} />
+                <MapPin size={15} style={{ color: '#0277B6', marginTop: 2, flexShrink: 0 }} />
                 <span>{s.display_name}</span>
               </div>
             ))}
 
-            {/* If not found or fallback option */}
             {searched && suggestions.length === 0 && (
-              <div style={{ padding: '0.75rem 0.9rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              <div style={{ padding: '0.75rem 0.9rem', fontSize: '0.82rem', color: '#64748B' }}>
                 No address found for "{value}".
               </div>
             )}
@@ -377,72 +367,180 @@ function AddressAutocomplete({ value, onChange, onOpenMap }) {
                 setOpen(false);
                 onOpenMap();
               }}
+              className="cm-address-item"
               style={{
-                padding: '0.65rem 0.9rem', cursor: 'pointer', fontSize: '0.82rem',
-                background: 'var(--bg-secondary)', color: 'var(--accent-blue)',
-                fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem',
-                borderTop: suggestions.length ? '1px solid var(--border)' : 'none',
+                background: '#F0F9FF',
+                color: '#0277B6',
+                fontWeight: 700,
+                borderTop: suggestions.length ? '1px solid #E2E8F0' : 'none',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--palette-ocean-soft)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
             >
-              <Navigation size={13} /> Can't find location? Open Map & Select Visually 🗺️
+              <Navigation size={15} style={{ marginTop: 2, flexShrink: 0 }} />
+              <span>Can't find exact location? Open Map & Select Visually 🗺️</span>
             </div>
           </div>
         )}
       </div>
-
-      <button
-        type="button"
-        className="btn btn-outline"
-        onClick={onOpenMap}
-        title="Open map to select address"
-        style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.625rem 0.9rem' }}
-      >
-        <MapPin size={15} /> Pick on Map
-      </button>
     </div>
   );
 }
 
-/* ─── Customer Add/Edit Modal ─── */
-export function CustomerModal({ customer, onClose, onSave }) {
-  const defaultForm = { name: '', phone: '', address: '', stickerImage: '', notes: '' };
-  const [form, setForm] = useState(customer ? {
-    name: customer.name || '',
-    phone: customer.phone || '',
-    address: customer.address || '',
-    stickerImage: customer.stickerImage || '',
-    notes: customer.notes || '',
-  } : defaultForm);
-  const [loading, setLoading] = useState(false);
-  const [showMapPicker, setShowMapPicker] = useState(false);
-  const fileRef = useRef();
+/* ─── Helper to parse initial phone to 10 digits ─── */
+const parsePhoneTo10 = (rawPhone) => {
+  if (!rawPhone) return '';
+  const digits = String(rawPhone).replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('91')) return digits.slice(2);
+  if (digits.length > 10) return digits.slice(-10);
+  return digits;
+};
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+/* ─── Premium Customer Add/Edit Modal (Ocean Blue Design System) ─── */
+export function CustomerModal({ customer, onClose, onSave }) {
+  const isEdit = Boolean(customer?._id);
+
+  const [name, setName] = useState(customer?.name || '');
+  const [phoneDigits, setPhoneDigits] = useState(() => parsePhoneTo10(customer?.phone));
+  const [address, setAddress] = useState(customer?.address || '');
+  const [stickerImage, setStickerImage] = useState(customer?.stickerImage || '');
+  const [notes, setNotes] = useState(customer?.notes || '');
+
+  const [loading, setLoading] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [showMapPicker, setShowMapPicker] = useState(false);
+  const [mapConfirmed, setMapConfirmed] = useState(Boolean(customer?.address));
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [touched, setTouched] = useState({ name: false, phone: false });
+
+  const nameInputRef = useRef(null);
+  const fileRef = useRef(null);
+
+  // Auto-focus name field on open
+  useEffect(() => {
+    const t = setTimeout(() => {
+      nameInputRef.current?.focus();
+    }, 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Validation
+  const isNameValid = name.trim().length >= 2;
+  const isPhoneValid = /^[6-9]\d{9}$/.test(phoneDigits.trim());
+
+  // Smooth exit transition
+  const triggerClose = useCallback(() => {
+    if (loading) return;
+    setClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 200);
+  }, [loading, onClose]);
+
+  // Keyboard accessibility: Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        triggerClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [triggerClose]);
+
+  // File Upload Processing
+  const handleFileProcess = (file) => {
     if (!file) return;
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Unsupported format. Please upload PNG, JPG, WEBP, or SVG');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image is too large. Maximum size is 5MB.');
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = (ev) => setForm(prev => ({ ...prev, stickerImage: ev.target.result }));
+    reader.onload = (ev) => {
+      setStickerImage(ev.target.result);
+      toast.success('Sticker label attached!');
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read image file');
+    };
     reader.readAsDataURL(file);
   };
 
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileProcess(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileProcess(file);
+  };
+
+  const handleRemoveSticker = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setStickerImage('');
+    if (fileRef.current) fileRef.current.value = '';
+    toast('Sticker image removed');
+  };
+
+  // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setTouched({ name: true, phone: true });
+
+    if (!isNameValid) {
+      toast.error('Please enter customer full name (min 2 characters)');
+      nameInputRef.current?.focus();
+      return;
+    }
+
+    if (!isPhoneValid) {
+      toast.error('Please enter a valid 10-digit mobile number');
+      return;
+    }
+
     setLoading(true);
+    const payload = {
+      name: name.trim(),
+      phone: `+91 ${phoneDigits.trim()}`,
+      address: address.trim(),
+      stickerImage,
+      notes: notes.trim(),
+    };
+
     try {
-      if (customer?._id) {
-        const { data } = await api.put(`/customers/${customer._id}`, form);
+      if (isEdit) {
+        const { data } = await api.put(`/customers/${customer._id}`, payload);
         onSave(data, 'edit');
-        toast.success('Customer updated!');
+        toast.success(`Updated customer: ${data.name}`);
       } else {
-        const { data } = await api.post('/customers', form);
+        const { data } = await api.post('/customers', payload);
         onSave(data, 'add');
-        toast.success('Customer added!');
+        toast.success(`Customer created: ${data.name}`);
       }
-      onClose();
+      triggerClose();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to save');
+      toast.error(err.response?.data?.message || 'Failed to save customer');
     } finally {
       setLoading(false);
     }
@@ -450,67 +548,276 @@ export function CustomerModal({ customer, onClose, onSave }) {
 
   return (
     <>
-      <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-        <div className="modal">
-          <div className="modal-header">
-            <span className="modal-title">{customer?._id ? 'Edit Customer' : 'Add New Customer'}</span>
-            <button className="btn btn-ghost btn-icon" onClick={onClose}>✕</button>
-          </div>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">Full Name *</label>
-              <input className="form-input" placeholder="Hotel Grand" value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })} required />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Phone Number *</label>
-              <input className="form-input" placeholder="+91 9876543210" value={form.phone}
-                onChange={e => setForm({ ...form, phone: e.target.value })} required />
-            </div>
+      <div
+        className={`customer-modal-overlay ${closing ? 'closing' : ''}`}
+        onClick={(e) => e.target === e.currentTarget && triggerClose()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="customer-modal-title"
+      >
+        <div className={`customer-modal-dialog ${closing ? 'closing' : ''}`}>
+          {/* Mobile swipe handle */}
+          <div className="customer-sheet-handle" />
 
-            {/* Address with autocomplete & Open Map button */}
-            <div className="form-group">
-              <label className="form-label">Address</label>
-              <AddressAutocomplete
-                value={form.address}
-                onChange={(val) => setForm(prev => ({ ...prev, address: val }))}
-                onOpenMap={() => setShowMapPicker(true)}
-              />
-            </div>
-
-            {/* Sticker Image */}
-            <div className="form-group">
-              <label className="form-label">Sticker Image</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button type="button" className="btn btn-outline btn-sm"
-                  onClick={() => fileRef.current.click()}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Image size={14} /> {form.stickerImage ? 'Change Image' : 'Upload Image'}
-                </button>
-                {form.stickerImage && (
-                  <button type="button" className="btn btn-ghost btn-sm"
-                    style={{ color: 'var(--accent-red)', fontSize: '0.78rem' }}
-                    onClick={() => setForm(prev => ({ ...prev, stickerImage: '' }))}>Remove</button>
-                )}
-                <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+          {/* 3. Header */}
+          <div className="customer-modal-header">
+            <div className="cm-header-left">
+              <div className="cm-header-icon">
+                {isEdit ? <UserCheck size={22} /> : <UserPlus size={22} />}
               </div>
-              {form.stickerImage && (
-                <div style={{ marginTop: '0.75rem', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', maxWidth: 200 }}>
-                  <img src={form.stickerImage} alt="Sticker preview"
-                    style={{ width: '100%', display: 'block', maxHeight: 120, objectFit: 'contain', background: 'var(--bg-primary)' }} />
+              <div className="cm-title-wrap">
+                <div id="customer-modal-title" className="cm-title">
+                  {isEdit ? 'Edit Customer' : 'Add New Customer'}
                 </div>
-              )}
+                <div className="cm-subtitle">
+                  {isEdit
+                    ? 'Update customer information and branding.'
+                    : 'Create a customer profile to manage orders and deliveries.'}
+                </div>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Notes</label>
-              <textarea className="form-textarea" placeholder="Any special notes..."
-                value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+            <button
+              type="button"
+              className="cm-close-btn"
+              onClick={triggerClose}
+              aria-label="Close dialog"
+              disabled={loading}
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            <div className="customer-modal-body">
+              {/* 4. Full Name Field */}
+              <div className="cm-field-group">
+                <div className="cm-label-row">
+                  <label htmlFor="customer-name" className="cm-label">
+                    Full Name <span className="cm-req">*</span>
+                  </label>
+                </div>
+                <input
+                  id="customer-name"
+                  ref={nameInputRef}
+                  type="text"
+                  className={`cm-input ${touched.name && !isNameValid ? 'error' : ''}`}
+                  placeholder="Enter customer name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (!touched.name) setTouched((prev) => ({ ...prev, name: true }));
+                  }}
+                  onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
+                  required
+                  autoComplete="off"
+                />
+                {touched.name && !isNameValid && (
+                  <div className="cm-field-error">
+                    <AlertCircle size={13} /> Full name must be at least 2 characters
+                  </div>
+                )}
+              </div>
+
+              {/* 5. Phone Number Field (+91 | 9876543210) */}
+              <div className="cm-field-group">
+                <div className="cm-label-row">
+                  <label htmlFor="customer-phone" className="cm-label">
+                    Phone Number <span className="cm-req">*</span>
+                  </label>
+                  <span className="cm-opt">10-digit mobile</span>
+                </div>
+                <div className={`cm-phone-wrap ${touched.phone && !isPhoneValid ? 'error' : ''}`}>
+                  <div className="cm-phone-prefix">
+                    <Phone size={14} />
+                    <span>+91</span>
+                  </div>
+                  <input
+                    id="customer-phone"
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={10}
+                    className="cm-phone-input"
+                    placeholder="9876543210"
+                    value={phoneDigits}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setPhoneDigits(digits);
+                      if (!touched.phone) setTouched((prev) => ({ ...prev, phone: true }));
+                    }}
+                    onBlur={() => setTouched((prev) => ({ ...prev, phone: true }))}
+                    required
+                  />
+                </div>
+                {touched.phone && !isPhoneValid && (
+                  <div className="cm-field-error">
+                    <AlertCircle size={13} />
+                    {phoneDigits.length === 0
+                      ? 'Phone number is required'
+                      : 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9'}
+                  </div>
+                )}
+              </div>
+
+              {/* 6. Address Field with Autocomplete & Map Picker */}
+              <div className="cm-field-group">
+                <div className="cm-label-row">
+                  <label htmlFor="customer-address" className="cm-label">
+                    Address
+                  </label>
+                  <span className="cm-opt">Delivery &amp; Billing</span>
+                </div>
+
+                <AddressAutocomplete
+                  value={address}
+                  onChange={(val) => {
+                    setAddress(val);
+                    setMapConfirmed(false);
+                  }}
+                  onOpenMap={() => setShowMapPicker(true)}
+                />
+
+                <button
+                  type="button"
+                  className="cm-map-btn"
+                  onClick={() => setShowMapPicker(true)}
+                >
+                  <MapPin size={16} /> Select location on map
+                </button>
+
+                {mapConfirmed && address && (
+                  <div className="cm-map-pinned-badge">
+                    <CheckCircle2 size={13} /> Location verified on map
+                  </div>
+                )}
+              </div>
+
+              {/* 7. Customer Sticker Image */}
+              <div className="cm-field-group">
+                <div className="cm-label-row">
+                  <label className="cm-label">
+                    Customer Sticker / Label
+                  </label>
+                  <span className="cm-opt">Water bottle artwork</span>
+                </div>
+
+                {!stickerImage ? (
+                  <div
+                    className={`cm-sticker-dropzone ${isDragOver ? 'dragover' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && fileRef.current?.click()}
+                    aria-label="Upload sticker image"
+                  >
+                    <div className="cm-sticker-icon-wrap">
+                      <UploadCloud size={24} />
+                    </div>
+                    <div className="cm-sticker-title">Upload Sticker Image</div>
+                    <div className="cm-sticker-sub">PNG, JPG, WEBP or SVG up to 5MB</div>
+                    <span className="cm-sticker-browse">
+                      <Image size={14} /> Browse Files
+                    </span>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
+                  </div>
+                ) : (
+                  <div className="cm-sticker-card">
+                    <div className="cm-sticker-frame">
+                      <img
+                        src={stickerImage}
+                        alt="Customer Sticker Preview"
+                        className="cm-sticker-img"
+                      />
+                    </div>
+                    <div className="cm-sticker-actions">
+                      <span className="cm-sticker-badge">
+                        <CheckCircle2 size={13} /> Label Attached
+                      </span>
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                          type="button"
+                          className="cm-btn-change"
+                          onClick={() => fileRef.current?.click()}
+                        >
+                          <Image size={13} /> Change Image
+                        </button>
+                        <button
+                          type="button"
+                          className="cm-btn-remove"
+                          onClick={handleRemoveSticker}
+                        >
+                          <Trash2 size={13} /> Remove
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelect}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* 8. Notes */}
+              <div className="cm-field-group">
+                <div className="cm-label-row">
+                  <label htmlFor="customer-notes" className="cm-label">
+                    Notes
+                  </label>
+                  <span className="cm-opt">Optional</span>
+                </div>
+                <textarea
+                  id="customer-notes"
+                  className="cm-notes-textarea"
+                  placeholder="Add delivery instructions, preferences or other customer notes..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-outline" onClick={onClose}>Cancel</button>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Saving...' : 'Save Customer'}
+
+            {/* 9. Save Action (Sticky Footer) */}
+            <div className="customer-modal-footer">
+              <button
+                type="button"
+                className="cm-btn-cancel"
+                onClick={triggerClose}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="cm-btn-submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" /> Saving...
+                  </>
+                ) : isEdit ? (
+                  <>
+                    <UserCheck size={18} /> Save Changes
+                  </>
+                ) : (
+                  <>
+                    <UserPlus size={18} /> Save Customer
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -520,8 +827,11 @@ export function CustomerModal({ customer, onClose, onSave }) {
       {/* Map Picker Modal */}
       {showMapPicker && (
         <MapLocationPicker
-          initialAddress={form.address}
-          onSelect={(address) => setForm(prev => ({ ...prev, address }))}
+          initialAddress={address}
+          onSelect={(selectedAddr) => {
+            setAddress(selectedAddr);
+            setMapConfirmed(true);
+          }}
           onClose={() => setShowMapPicker(false)}
         />
       )}
@@ -529,11 +839,12 @@ export function CustomerModal({ customer, onClose, onSave }) {
   );
 }
 
-/* ─── Customer Detail & Orders Preview Modal ─── */
+/* ─── Customer Detail & Orders Preview Modal (Premium CRM Profile) ─── */
 function CustomerDetail({ customer, onClose, onEdit }) {
   const { user } = useAuth();
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [closing, setClosing] = useState(false);
   const [activeTab, setActiveTab] = useState('metrics'); // 'metrics' | 'history'
   const [orderFilter, setOrderFilter] = useState('all'); // 'all' | 'paid' | 'unpaid'
   const [expandedOrder, setExpandedOrder] = useState(null);
@@ -548,28 +859,35 @@ function CustomerDetail({ customer, onClose, onEdit }) {
       .finally(() => setLoading(false));
   }, [customer._id]);
 
+  // Smooth exit transition
+  const triggerClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 180);
+  }, [onClose]);
+
+  // Keyboard accessibility: Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        triggerClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [triggerClose]);
+
   const rawPhone = (customer.phone || '').replace(/\D/g, '');
   const cleanPhone = rawPhone.startsWith('91') ? rawPhone : (rawPhone ? `91${rawPhone}` : '');
   const initials = (customer.name || 'C')
     .split(' ')
     .map(n => n[0])
+    .filter(Boolean)
     .slice(0, 2)
     .join('')
     .toUpperCase();
-
-  const copyPhone = (e) => {
-    if (e) e.stopPropagation();
-    if (!customer.phone) return;
-    navigator.clipboard.writeText(customer.phone);
-    toast.success('Phone number copied!');
-  };
-
-  const copyAddress = (e) => {
-    if (e) e.stopPropagation();
-    if (!customer.address) return;
-    navigator.clipboard.writeText(customer.address);
-    toast.success('Address copied!');
-  };
 
   /* Touch swipe left/right handlers */
   const handleTouchStart = (e) => {
@@ -580,28 +898,19 @@ function CustomerDetail({ customer, onClose, onEdit }) {
   const handleTouchEnd = (e) => {
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
     const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-    // Swipe threshold of 45px and predominantly horizontal
-    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
-      if (deltaX < 0) {
-        // Swipe left -> switch to history
-        setActiveTab('history');
-      } else {
-        // Swipe right -> switch to metrics
-        setActiveTab('metrics');
-      }
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+      if (deltaX < 0) setActiveTab('history');
+      else setActiveTab('metrics');
     }
   };
 
   const sendWhatsApp = () => {
     if (!detail) {
-      // Detail still loading — open plain WhatsApp chat
       if (cleanPhone) window.open(`https://wa.me/${cleanPhone}`, '_blank');
       return;
     }
     const { summary, orders } = detail;
-
-    // Only unpaid / partial orders
-    const pendingOrders = orders.filter(o => o.paymentStatus !== 'paid' && o.totalAmount > o.paidAmount);
+    const pendingOrders = (orders || []).filter(o => o.paymentStatus !== 'paid' && o.totalAmount > (o.paidAmount || 0));
 
     if (!pendingOrders.length) {
       toast('No pending dues for this customer 🎉', { icon: '✅' });
@@ -610,7 +919,7 @@ function CustomerDetail({ customer, onClose, onEdit }) {
 
     const orderLines = pendingOrders
       .map(o => {
-        const due = o.totalAmount - o.paidAmount;
+        const due = o.totalAmount - (o.paidAmount || 0);
         const date = dayjs(o.createdAt).format('D MMM YYYY');
         return `• 🧾 Order ${o.orderNumber} (${date}): ₹${due.toLocaleString('en-IN')} due`;
       })
@@ -665,8 +974,8 @@ function CustomerDetail({ customer, onClose, onEdit }) {
   };
 
   const allOrders = detail?.orders || [];
-  const paidOrders = allOrders.filter(o => o.paymentStatus === 'paid');
-  const unpaidOrders = allOrders.filter(o => o.paymentStatus !== 'paid');
+  const paidOrders = allOrders.filter(o => o.paymentStatus === 'paid' || (o.totalAmount - (o.paidAmount || 0)) <= 0);
+  const unpaidOrders = allOrders.filter(o => o.paymentStatus !== 'paid' && (o.totalAmount - (o.paidAmount || 0)) > 0);
 
   const visibleOrders = orderFilter === 'paid'
     ? paidOrders
@@ -674,106 +983,132 @@ function CustomerDetail({ customer, onClose, onEdit }) {
     ? unpaidOrders
     : allOrders;
 
-  const pendingAmount = detail?.summary?.pending || 0;
+  const pendingAmount = detail?.summary?.pending ?? 0;
   const mapsUrl = customer.address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(customer.address)}`
     : '';
 
-  return (
-    <div className="modal-overlay preview-modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal preview-modal-dialog">
-        {/* Mobile drag handle */}
-        <div className="preview-sheet-handle" />
+  const receivedPercent = detail?.summary?.totalValue > 0
+    ? Math.min(100, Math.round((detail.summary.totalPaid / detail.summary.totalValue) * 100))
+    : 100;
 
-            {/* Hero Header: Profile Row + Icon Toolbar Row */}
-            <div className="preview-hero">
-              {/* Row 1: Avatar + Name + Phone */}
-              <div className="preview-hero-profile">
-                <div className="preview-avatar-wrap">
-                  {customer.stickerImage ? (
-                    <img src={customer.stickerImage} alt={customer.name} className="preview-avatar-img" />
-                  ) : (
-                    <div className="preview-avatar-fallback">
-                      {initials}
-                    </div>
-                  )}
-                </div>
-                <div className="preview-hero-info">
-                  <div className="preview-customer-name">
-                    <span>{customer.name}</span>
-                    {detail && (
-                      <span className={`preview-status-pill ${pendingAmount > 0 ? 'badge-yellow' : 'badge-green'}`}>
-                        {pendingAmount > 0 ? `₹${pendingAmount.toLocaleString('en-IN')} Due` : 'All Clear'}
-                      </span>
-                    )}
-                  </div>
-                  <div className="preview-phone-row">
-                    <a href={`tel:${customer.phone}`} className="preview-phone-link">
-                      <Phone size={13} /> {customer.phone}
-                    </a>
-                  </div>
-                </div>
+  const recentOrders = allOrders.slice(0, 2);
+
+  return (
+    <div
+      className={`crm-profile-overlay ${closing ? 'closing' : ''}`}
+      onClick={e => e.target === e.currentTarget && triggerClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="crm-customer-title"
+    >
+      <div className={`crm-profile-dialog ${closing ? 'closing' : ''}`}>
+        {/* Mobile drag handle */}
+        <div className="crm-sheet-handle" />
+
+        {/* ══════════════════════════════════════════════════════
+            1. STICKY HERO HEADER: Profile + Actions + Status
+           ══════════════════════════════════════════════════════ */}
+        <div className="crm-hero">
+          <div className="crm-hero-top">
+            <div className="crm-hero-profile">
+              <div className="crm-avatar-wrap">
+                {customer.stickerImage ? (
+                  <img src={customer.stickerImage} alt={customer.name} className="crm-avatar-img" />
+                ) : (
+                  <div className="crm-avatar-fallback">{initials}</div>
+                )}
               </div>
 
-              {/* Row 2: Icon-Only Action Toolbar */}
-              <div className="preview-quick-icons">
-                <a
-                  href={`tel:${customer.phone}`}
-                  className="preview-icon-btn call"
-                  title="Call Customer"
-                  aria-label="Call Customer"
-                >
-                  <Phone size={16} />
-                </a>
-                {cleanPhone && (
-                  <button
-                    type="button"
-                    className="preview-icon-btn whatsapp"
-                    title="Send WhatsApp Reminder"
-                    aria-label="Send WhatsApp Reminder"
-                    onClick={sendWhatsApp}
-                  >
-                    {/* WhatsApp SVG icon */}
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                    </svg>
-                  </button>
-                )}
-                {mapsUrl && (
-                  <a
-                    href={mapsUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="preview-icon-btn map"
-                    title="Open in Google Maps"
-                    aria-label="Open in Google Maps"
-                  >
-                    {/* Google Maps pin SVG */}
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
+              <div className="crm-hero-info">
+                <div className="crm-customer-name-row">
+                  <span id="crm-customer-title" className="crm-customer-name">{customer.name}</span>
+                  {detail && (
+                    <span className={`crm-due-pill ${pendingAmount > 0 ? 'due' : 'clear'}`}>
+                      {pendingAmount > 0
+                        ? ` Due`
+                        : '✓ All Clear'}
+                    </span>
+                  )}
+                </div>
+
+                {customer.phone && (
+                  <a href={`tel:${customer.phone}`} className="crm-phone-link" title="Click to call">
+                    <Phone size={12} />
+                    <span>{customer.phone}</span>
                   </a>
                 )}
-                <button
-                  type="button"
-                  className="preview-icon-btn close"
-                  onClick={onClose}
-                  title="Close"
-                  aria-label="Close"
-                  style={{ marginLeft: 'auto' }}
-                >
-                  <X size={18} />
-                </button>
               </div>
             </div>
 
-        {/* 2-Tab Navigation Bar with Sliding Indicator */}
-        <div className="preview-tabs-bar">
-          <div className="preview-tabs-track">
             <button
               type="button"
-              className={`preview-tab-btn ${activeTab === 'metrics' ? 'active' : ''}`}
+              className="crm-action-btn close"
+              onClick={triggerClose}
+              aria-label="Close profile"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Quick Action Toolbar */}
+          <div className="crm-quick-actions">
+            {customer.phone && (
+              <a
+                href={`tel:${customer.phone}`}
+                className="crm-action-btn call"
+                title="Call Customer"
+                aria-label="Call Customer"
+              >
+                <Phone size={15} />
+              </a>
+            )}
+
+            {cleanPhone && (
+              <button
+                type="button"
+                className="crm-action-btn whatsapp"
+                title="Send WhatsApp Reminder"
+                aria-label="Send WhatsApp Reminder"
+                onClick={sendWhatsApp}
+              >
+                <i class="bi bi-whatsapp"></i>
+              </button>
+            )}
+
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="crm-action-btn map"
+                title="Open location on Google Maps"
+                aria-label="Open location on Google Maps"
+              >
+                <MapPin size={15} />
+              </a>
+            )}
+
+            <button
+              type="button"
+              className="crm-action-btn edit"
+              onClick={() => onEdit(customer)}
+              title="Edit customer profile"
+              aria-label="Edit customer profile"
+            >
+              <Edit2 size={15} />
+            </button>
+          </div>
+        </div>
+
+        {/* ══════════════════════════════════════════════════════
+            2. STICKY TABS BAR: Metrics vs History
+           ══════════════════════════════════════════════════════ */}
+        <div className="crm-tabs-bar">
+          <div className="crm-tabs-track">
+            <button
+              type="button"
+              className={`crm-tab-btn ${activeTab === 'metrics' ? 'active' : ''}`}
               onClick={() => setActiveTab('metrics')}
             >
               <TrendingUp size={15} />
@@ -781,259 +1116,355 @@ function CustomerDetail({ customer, onClose, onEdit }) {
             </button>
             <button
               type="button"
-              className={`preview-tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+              className={`crm-tab-btn ${activeTab === 'history' ? 'active' : ''}`}
               onClick={() => setActiveTab('history')}
             >
               <Clock size={15} />
               <span>History</span>
               {allOrders.length > 0 && (
-                <span className="preview-tab-badge">{allOrders.length}</span>
+                <span className="crm-tab-badge">{allOrders.length}</span>
               )}
             </button>
-            {/* Sliding Active Tab Indicator */}
-            <div
-              className="preview-tab-indicator"
-              style={{
-                transform: activeTab === 'metrics' ? 'translateX(0%)' : 'translateX(100%)',
-              }}
-            />
           </div>
         </div>
 
-        {/* Swipeable Viewport with Carousel Animation */}
+        {/* ══════════════════════════════════════════════════════
+            3. SCROLLABLE TAB CONTENT (Metrics or History)
+           ══════════════════════════════════════════════════════ */}
         {loading ? (
           <div style={{ padding: '3.5rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
             <div className="loading-spinner" />
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Loading customer data...</div>
+            <div style={{ fontSize: '0.85rem', color: '#64748B' }}>Loading customer records...</div>
           </div>
         ) : detail ? (
           <div
-            className="preview-swipe-viewport"
+            className="crm-scroll-body"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
             {/* ─── TAB 1: METRICS ─── */}
-            <div
-              className="preview-tab-slide"
-              style={{ display: activeTab === 'metrics' ? 'flex' : 'none' }}
-            >
-
-                {/* 4 KPI Metrics Grid */}
-                <div className="preview-metrics-grid">
-                  <div className="preview-metric-card orders">
-                    <div className="preview-metric-header">
-                      <span className="preview-metric-label">Orders</span>
-                      <div className="preview-metric-icon"><Package size={15} /></div>
+            {activeTab === 'metrics' && (
+              <>
+                {/* 4 Primary KPI Metrics in 2-Column Grid */}
+                <div className="crm-metrics-grid">
+                  <div className="crm-metric-card orders">
+                    <div className="crm-metric-header">
+                      <span>Total Orders</span>
+                      <Package size={15} style={{ color: '#0277B6' }} />
                     </div>
-                    <div className="preview-metric-value">{detail.summary.totalOrders}</div>
-                    <span className="preview-metric-sub">Total bookings</span>
+                    <div className="crm-metric-value">{detail.summary.totalOrders}</div>
+                    <span className="crm-metric-sub">Lifetime bookings</span>
                   </div>
 
-                  <div className="preview-metric-card billed">
-                    <div className="preview-metric-header">
-                      <span className="preview-metric-label">Billed</span>
-                      <div className="preview-metric-icon"><TrendingUp size={15} /></div>
+                  <div className="crm-metric-card billed">
+                    <div className="crm-metric-header">
+                      <span>Total Billed</span>
+                      <TrendingUp size={15} style={{ color: '#03045E' }} />
                     </div>
-                    <div className="preview-metric-value">₹{detail.summary.totalValue.toLocaleString('en-IN')}</div>
-                    <span className="preview-metric-sub">Lifetime value</span>
+                    <div className="crm-metric-value">₹{detail.summary.totalValue.toLocaleString('en-IN')}</div>
+                    <span className="crm-metric-sub">Gross order value</span>
                   </div>
 
-                  <div className="preview-metric-card paid">
-                    <div className="preview-metric-header">
-                      <span className="preview-metric-label">Received</span>
-                      <div className="preview-metric-icon"><CheckCircle2 size={15} /></div>
+                  <div className="crm-metric-card received">
+                    <div className="crm-metric-header">
+                      <span>Total Received</span>
+                      <CheckCircle2 size={15} style={{ color: '#15803D' }} />
                     </div>
-                    <div className="preview-metric-value">₹{detail.summary.totalPaid.toLocaleString('en-IN')}</div>
-                    <span className="preview-metric-sub">Cleared payments</span>
+                    <div className="crm-metric-value">₹{detail.summary.totalPaid.toLocaleString('en-IN')}</div>
+                    <span className="crm-metric-sub">Cleared payments</span>
                   </div>
 
-                  <div className={`preview-metric-card ${pendingAmount > 0 ? 'pending' : 'cleared'}`}>
-                    <div className="preview-metric-header">
-                      <span className="preview-metric-label">Pending</span>
-                      <div className="preview-metric-icon">
-                        {pendingAmount > 0 ? <AlertCircle size={15} /> : <Sparkles size={15} />}
-                      </div>
+                  <div className={`crm-metric-card ${pendingAmount > 0 ? 'pending' : 'settled'}`}>
+                    <div className="crm-metric-header">
+                      <span>Pending Balance</span>
+                      {pendingAmount > 0 ? (
+                        <AlertCircle size={15} style={{ color: '#DC2626' }} />
+                      ) : (
+                        <Sparkles size={15} style={{ color: '#15803D' }} />
+                      )}
                     </div>
-                    <div className="preview-metric-value">
+                    <div className="crm-metric-value" style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D' }}>
                       ₹{pendingAmount.toLocaleString('en-IN')}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      {pendingAmount > 0 && <span className="preview-pulse-dot" />}
-                      <span className="preview-metric-sub" style={{ color: pendingAmount > 0 ? 'var(--accent-red)' : 'var(--accent-green)', fontWeight: 600 }}>
-                        {pendingAmount > 0 ? 'Dues Outstanding' : 'All Paid Up'}
-                      </span>
-                    </div>
+                    <span className="crm-metric-sub" style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D', fontWeight: 600 }}>
+                      {pendingAmount > 0 ? 'Dues Outstanding' : 'All Settled'}
+                    </span>
                   </div>
                 </div>
 
-                {/* WhatsApp Reminder Banner removed — action is in hero icons */}
-
-                {/* Quick Swipe Hint */}
-                <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
-                  <span>👈 Swipe left or tap History to view orders</span>
-                </div>
-              </div>
-
-              {/* ─── TAB 2: ORDER HISTORY ─── */}
-              <div
-                className="preview-tab-slide"
-                style={{ display: activeTab === 'history' ? 'flex' : 'none' }}
-              >
-                <div className="preview-orders-box">
-                  <div className="preview-orders-header">
-                    <div className="preview-orders-title">
-                      <Calendar size={16} style={{ color: 'var(--accent-blue)' }} /> Orders Log
-                    </div>
-                    <div className="preview-filter-chips">
-                      <button
-                        type="button"
-                        className={`preview-filter-chip ${orderFilter === 'all' ? 'active' : ''}`}
-                        onClick={() => setOrderFilter('all')}
-                      >
-                        All ({allOrders.length})
-                      </button>
-                      <button
-                        type="button"
-                        className={`preview-filter-chip ${orderFilter === 'paid' ? 'active' : ''}`}
-                        onClick={() => setOrderFilter('paid')}
-                      >
-                        Paid ({paidOrders.length})
-                      </button>
-                      <button
-                        type="button"
-                        className={`preview-filter-chip ${orderFilter === 'unpaid' ? 'active' : ''}`}
-                        onClick={() => setOrderFilter('unpaid')}
-                      >
-                        Unpaid ({unpaidOrders.length})
-                      </button>
-                    </div>
+                {/* Financial Overview Card */}
+                <div className="crm-overview-card">
+                  <div className="crm-overview-title">
+                    <CreditCard size={16} style={{ color: '#0277B6' }} />
+                    <span>Financial Overview</span>
                   </div>
 
-                  {visibleOrders.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: 'var(--bg-secondary)', borderRadius: 12, border: '1px dashed var(--border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                      {orderFilter === 'all' ? 'No orders recorded yet' : `No ${orderFilter} orders found`}
-                    </div>
-                  ) : (
-                    <div className="preview-orders-list">
-                      {visibleOrders.map(o => {
+                  <div className="crm-overview-bar">
+                    <div
+                      className="crm-overview-bar-fill"
+                      style={{ width: `${receivedPercent}%` }}
+                    />
+                  </div>
+
+                  <div className="crm-overview-row">
+                    <span>Lifetime Billed</span>
+                    <strong>₹{detail.summary.totalValue.toLocaleString('en-IN')}</strong>
+                  </div>
+
+                  <div className="crm-overview-row">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#15803D' }} />
+                      Payments Received ({receivedPercent}%)
+                    </span>
+                    <strong style={{ color: '#15803D' }}>₹{detail.summary.totalPaid.toLocaleString('en-IN')}</strong>
+                  </div>
+
+                  <div className="crm-overview-row">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: pendingAmount > 0 ? '#DC2626' : '#15803D' }} />
+                      Outstanding Balance
+                    </span>
+                    <strong style={{ color: pendingAmount > 0 ? '#DC2626' : '#15803D' }}>
+                      ₹{pendingAmount.toLocaleString('en-IN')}
+                    </strong>
+                  </div>
+                </div>
+
+                {/* Recent Orders Section */}
+                <div className="crm-recent-section">
+                  <div className="crm-recent-header">
+                    <span className="crm-recent-title">
+                      <Clock size={15} style={{ color: '#0277B6' }} />
+                      Recent Orders
+                    </span>
+                    {allOrders.length > 0 && (
+                      <button
+                        type="button"
+                        className="crm-recent-view-all"
+                        onClick={() => setActiveTab('history')}
+                      >
+                        View All ({allOrders.length}) →
+                      </button>
+                    )}
+                  </div>
+
+                  {recentOrders.length > 0 ? (
+                    <div className="crm-recent-orders-list">
+                      {recentOrders.map(o => {
                         const due = o.totalAmount - (o.paidAmount || 0);
-                        const isExpanded = expandedOrder === o._id;
-                        const isPaid = o.paymentStatus === 'paid';
-                        const lines = o.lines || [];
-                        const customerName = customer.name || 'Customer';
-                        const totalCases = lines.reduce((sum, l) => sum + (l.cases || 0), 0);
-                        const totalBottles = lines.reduce((sum, l) => sum + ((l.cases || 0) * (l.bottlesPerCase || 12)), 0);
-
+                        const isPaid = o.paymentStatus === 'paid' || due <= 0;
                         return (
                           <div
                             key={o._id}
-                            className="neo-order-card"
+                            className="crm-recent-order-item"
+                            onClick={() => {
+                              setActiveTab('history');
+                              setExpandedOrder(o._id);
+                            }}
                           >
-                            {/* Top Bar: Left Tab + Right Meta Time & Date on dark background */}
-                            <div className="neo-order-topbar">
-                              <div className="neo-order-tab">
-                                {isPaid ? 'Paid' : due > 0 && (o.paidAmount || 0) > 0 ? 'Partial' : 'Pending'}
+                            <div>
+                              <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#03045E' }}>
+                                #{o.orderNumber}
                               </div>
-                              <div className="neo-order-meta">
-                                <span className="neo-order-meta-item">
-                                  <Clock size={13} /> {dayjs(o.createdAt).format('HH:mm')}
-                                </span>
-                                <span className="neo-order-meta-item">
-                                  <Calendar size={13} /> {dayjs(o.createdAt).format('DD-MM-YYYY')}
-                                </span>
+                              <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                                {dayjs(o.createdAt).format('DD MMM YYYY · HH:mm')}
                               </div>
                             </div>
 
-                            {/* Main Body */}
-                            <div className="neo-order-body">
-                              <div className="neo-order-title" onClick={() => setExpandedOrder(isExpanded ? null : o._id)}>
-                                {customerName} (Order #{o.orderNumber})
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0277B6' }}>
+                                ₹{o.totalAmount.toLocaleString('en-IN')}
                               </div>
-
-                              {/* Frosted Pill Badges */}
-                              <div className="neo-order-pills" onClick={() => setExpandedOrder(isExpanded ? null : o._id)}>
-                                <span className="neo-order-pill">
-                                  <TrendingUp size={12} /> {totalCases > 0 ? `${totalCases} Cases (${totalBottles} Btls)` : 'Standard Order'}
-                                </span>
+                              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: isPaid ? '#15803D' : '#DC2626' }}>
+                                {isPaid ? 'Paid' : `Due: ₹${due.toLocaleString('en-IN')}`}
                               </div>
-
-                              {/* Bottom Stats Row */}
-                              <div className="neo-order-footer">
-                                <div>
-                                  Total Billed : <span className="neo-order-stat-val">₹{o.totalAmount.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div>
-                                  {due > 0 ? (
-                                    <span>Due : <span className="neo-order-stat-val" style={{ color: 'var(--palette-sky-blue)' }}>₹{due.toLocaleString('en-IN')}</span></span>
-                                  ) : (
-                                    <span>Profit : <span className="neo-order-stat-val">₹{o.totalAmount.toLocaleString('en-IN')}</span></span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Quick Action Strip + Expand Toggle */}
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px dashed rgba(255,255,255,0.22)' }}>
-                                <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                                  {!isPaid && cleanPhone && (
-                                    <button
-                                      type="button"
-                                      className="btn btn-sm"
-                                      style={{ background: '#25D366', color: '#fff', border: 'none', padding: '0.3rem 0.65rem', borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        sendOrderWhatsApp(o);
-                                      }}
-                                      title="Send WhatsApp payment reminder"
-                                    >
-                                      <MessageCircle size={14} /> Send Reminder
-                                    </button>
-                                  )}
-                                </div>
-
-                                <button
-                                  type="button"
-                                  style={{ background: 'transparent', border: 'none', color: 'var(--palette-ice-blue)', display: 'flex', alignItems: 'center', gap: 2, fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', marginLeft: 'auto' }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setExpandedOrder(isExpanded ? null : o._id);
-                                  }}
-                                >
-                                  <span>{isExpanded ? 'Hide' : 'Items'}</span>
-                                  {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                                </button>
-                              </div>
-
-                              {/* Expandable Line Items breakdown */}
-                              {isExpanded && lines.length > 0 && (
-                                <div className="neo-order-expanded" onClick={e => e.stopPropagation()}>
-                                  <div style={{ fontWeight: 800, opacity: 0.9, marginBottom: 2 }}>Order Items:</div>
-                                  {lines.map((l, idx) => (
-                                    <div key={idx} className="neo-order-expanded-row">
-                                      <span>💧 {l.productName} ({l.size || 'Standard'}) × {l.cases} cases ({l.cases * (l.bottlesPerCase || 12)} bottles)</span>
-                                      <span style={{ fontWeight: 800 }}>₹{((l.cases * (l.bottlesPerCase || 12)) * (l.pricePerBottle || 0)).toLocaleString('en-IN')}</span>
-                                    </div>
-                                  ))}
-                                  {o.notes && (
-                                    <div style={{ opacity: 0.85, fontStyle: 'italic', marginTop: 4 }}>
-                                      Note: {o.notes}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
                             </div>
                           </div>
                         );
                       })}
                     </div>
+                  ) : (
+                    <div style={{ padding: '1.25rem', textAlign: 'center', background: '#F8FAFC', borderRadius: 10, border: '1px dashed #E2E8F0', fontSize: '0.8rem', color: '#64748B' }}>
+                      No orders recorded yet
+                    </div>
                   )}
-
-                  {/* Quick Swipe Hint */}
-                  <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
-                    <span>👉 Swipe right or tap Metrics to view summary</span>
-                  </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Customer Address & Notes details */}
+                {(customer.address || customer.notes) && (
+                  <div style={{ padding: '0.75rem 0.95rem', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    {customer.address && (
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', fontSize: '0.78rem', color: '#172033' }}>
+                        <MapPin size={14} style={{ color: '#0277B6', flexShrink: 0, marginTop: 2 }} />
+                        <span>{customer.address}</span>
+                      </div>
+                    )}
+                    {customer.notes && (
+                      <div style={{ fontSize: '0.74rem', color: '#64748B', fontStyle: 'italic', paddingTop: '0.35rem', borderTop: '1px dashed #E2E8F0' }}>
+                        Note: {customer.notes}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ─── TAB 2: ORDER HISTORY ─── */}
+            {activeTab === 'history' && (
+              <>
+                {/* Segmented Filter Control */}
+                <div className="crm-history-filters">
+                  <button
+                    type="button"
+                    className={`crm-filter-chip ${orderFilter === 'all' ? 'active' : ''}`}
+                    onClick={() => setOrderFilter('all')}
+                  >
+                    All ({allOrders.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`crm-filter-chip ${orderFilter === 'paid' ? 'active' : ''}`}
+                    onClick={() => setOrderFilter('paid')}
+                  >
+                    Paid ({paidOrders.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`crm-filter-chip ${orderFilter === 'unpaid' ? 'active' : ''}`}
+                    onClick={() => setOrderFilter('unpaid')}
+                  >
+                    Unpaid ({unpaidOrders.length})
+                  </button>
+                </div>
+
+                {visibleOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: '#F8FAFC', borderRadius: 14, border: '1px dashed #E2E8F0', color: '#64748B', fontSize: '0.85rem' }}>
+                    {orderFilter === 'all' ? 'No orders recorded yet' : `No ${orderFilter} orders found`}
+                  </div>
+                ) : (
+                  <div className="crm-orders-list">
+                    {visibleOrders.map(o => {
+                      const due = o.totalAmount - (o.paidAmount || 0);
+                      const isExpanded = expandedOrder === o._id;
+                      const isPaid = o.paymentStatus === 'paid' || due <= 0;
+                      const isPartial = !isPaid && (o.paidAmount || 0) > 0;
+                      const lines = o.lines || [];
+                      const totalCases = lines.reduce((sum, l) => sum + (l.cases || 0), 0);
+                      const totalBottles = lines.reduce((sum, l) => sum + ((l.cases || 0) * (l.bottlesPerCase || 12)), 0);
+
+                      return (
+                        <div key={o._id} className="crm-order-card">
+                          {/* 1. Header: Status badge + Order ID + Date & Time */}
+                          <div className="crm-order-header">
+                            <div className="crm-order-header-left">
+                              <span className={`crm-order-status-badge ${isPaid ? 'paid' : isPartial ? 'partial' : 'unpaid'}`}>
+                                {isPaid ? 'Paid' : isPartial ? 'Partial' : 'Unpaid'}
+                              </span>
+                              <span className="crm-order-id">#{o.orderNumber}</span>
+                            </div>
+
+                            <span className="crm-order-time">
+                              <Calendar size={12} />
+                              {dayjs(o.createdAt).format('DD MMM YYYY · HH:mm')}
+                            </span>
+                          </div>
+
+                          {/* 2. Order Body */}
+                          <div className="crm-order-body">
+                            {/* Summary row */}
+                            <div className="crm-order-summary-row">
+                              <span className="crm-order-summary-pill">
+                                <Package size={13} style={{ color: '#0277B6' }} />
+                                {totalCases} Cases ({totalBottles} Btls)
+                              </span>
+                            </div>
+
+                            {/* Financial 3-column overview */}
+                            <div className="crm-order-financials">
+                              <div className="crm-order-fin-item">
+                                <span className="crm-order-fin-label">Billed</span>
+                                <span className="crm-order-fin-val">₹{o.totalAmount.toLocaleString('en-IN')}</span>
+                              </div>
+                              <div className="crm-order-fin-item">
+                                <span className="crm-order-fin-label">Received</span>
+                                <span className="crm-order-fin-val paid">₹{(o.paidAmount || 0).toLocaleString('en-IN')}</span>
+                              </div>
+                              <div className="crm-order-fin-item">
+                                <span className="crm-order-fin-label">Pending</span>
+                                <span className={`crm-order-fin-val ${due > 0 ? 'due' : 'paid'}`}>
+                                  ₹{due.toLocaleString('en-IN')}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Actions row: WhatsApp Reminder + View Items toggle */}
+                            <div className="crm-order-actions-row">
+                              {!isPaid && cleanPhone ? (
+                                <button
+                                  type="button"
+                                  className="crm-btn-reminder"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    sendOrderWhatsApp(o);
+                                  }}
+                                  title="Send payment reminder via WhatsApp"
+                                >
+                                  <MessageCircle size={13} /> Send Reminder
+                                </button>
+                              ) : <span />}
+
+                              <button
+                                type="button"
+                                className="crm-btn-view-items"
+                                onClick={() => setExpandedOrder(isExpanded ? null : o._id)}
+                              >
+                                <span>{isExpanded ? 'Hide Items' : 'View Items'}</span>
+                                {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* 3. Inline Expandable Line Items breakdown */}
+                          {isExpanded && lines.length > 0 && (
+                            <div className="crm-order-items-breakdown">
+                              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#03045E', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                                Order Items Breakdown:
+                              </div>
+                              {lines.map((l, idx) => {
+                                const bpc = l.bottlesPerCase || 12;
+                                const lineBottles = (l.cases || 0) * bpc;
+                                const lineSubtotal = lineBottles * (l.pricePerBottle || 0);
+                                return (
+                                  <div key={idx} className="crm-order-item-row">
+                                    <div>
+                                      <div className="crm-order-item-name">
+                                        💧 {l.productName} ({l.size || 'Standard'})
+                                      </div>
+                                      <div className="crm-order-item-desc">
+                                        {l.cases} case{l.cases !== 1 ? 's' : ''} × {bpc} = {lineBottles} btls @ ₹{l.pricePerBottle}/btl
+                                      </div>
+                                    </div>
+                                    <div className="crm-order-item-subtotal">
+                                      ₹{lineSubtotal.toLocaleString('en-IN')}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                              {o.notes && (
+                                <div className="crm-order-notes-box">
+                                  Delivery / Order Note: {o.notes}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         ) : null}
       </div>
     </div>
@@ -1140,7 +1571,7 @@ export default function Customers() {
               boxShadow: 'var(--shadow-sm)'
             }}
           >
-            <Plus size={16} strokeWidth={2.5} /> Add Customer
+            <Plus size={16} strokeWidth={2.5} /> Customer
           </button>
         </div>
 

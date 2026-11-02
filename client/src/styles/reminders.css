@@ -1,0 +1,13 @@
+/* ─── WhatsApp Reminder ─── */
+.reminder-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+.reminder-card:hover { border-color: #25D366; box-shadow: 0 2px 10px rgba(37, 211, 102, 0.18); }
+.reminder-card.sent { opacity: 0.6; }
+

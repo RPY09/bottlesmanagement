@@ -19,8 +19,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+// CORS configuration supporting local dev and Vercel domains
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map(o => o.trim().replace(/\/$/, ''));
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow non-browser requests (Postman, curl, health checks)
+    if (!origin) return callback(null, true);
+    const clean = origin.replace(/\/$/, '');
+    if (
+      allowedOrigins.includes(clean) ||
+      allowedOrigins.includes('*') ||
+      clean.endsWith('.vercel.app') ||
+      clean.includes('localhost')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));

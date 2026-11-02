@@ -1,0 +1,1380 @@
+/* ══════════════════════════════════════════════════════
+   OCEAN BLUE EXPENSE MANAGEMENT SYSTEM
+   Premium Mobile Transaction Cards & Desktop BI Table
+   Prefix: .exp-*
+   ══════════════════════════════════════════════════════ */
+
+.exp-page {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #172033;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ─── 1. Header ─── */
+.exp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.exp-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.exp-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #03045E;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.exp-subtitle {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.exp-total-pill {
+  color: #DC2626;
+  font-weight: 700;
+  background: #FEE2E2;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.exp-btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: #DC2626;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px -1px rgba(220, 38, 38, 0.28);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.exp-btn-add:hover {
+  background: #B91C1C;
+  box-shadow: 0 4px 10px -2px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+.exp-btn-add:active {
+  transform: translateY(0);
+}
+
+/* ─── 2. Reporting Period Selector Bar ─── */
+.exp-period-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exp-period-bar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 2px;
+}
+
+.exp-period-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.exp-period-chip {
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748B;
+  padding: 0.32rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.exp-period-chip:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #03045E;
+}
+
+.exp-period-chip.active {
+  background: #0277B6;
+  border-color: #0277B6;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(2, 119, 182, 0.25);
+}
+
+.exp-custom-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0.5rem 0.85rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.exp-date-input {
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: #172033;
+  background: #F8FAFC;
+  outline: none;
+  flex: 1;
+  min-width: 130px;
+}
+
+.exp-date-input:focus {
+  border-color: #0277B6;
+  background: #FFFFFF;
+}
+
+.exp-date-sep {
+  color: #64748B;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+
+.exp-apply-btn {
+  background: #0277B6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 0.38rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.exp-apply-btn:hover {
+  background: #025E91;
+}
+
+/* ─── 3. Metrics Summary Cards ─── */
+.exp-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .exp-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.exp-metric-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.exp-metric-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+}
+
+.exp-metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.exp-metric-icon.red {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+}
+
+.exp-metric-icon.navy {
+  background: rgba(3, 4, 94, 0.08);
+  color: #03045E;
+}
+
+.exp-metric-icon.amber {
+  background: rgba(217, 119, 6, 0.1);
+  color: #D97706;
+}
+
+.exp-metric-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.exp-metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.15rem;
+}
+
+.exp-metric-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #172033;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.exp-metric-value.red {
+  color: #DC2626;
+}
+
+.exp-metric-sub {
+  font-size: 0.7rem;
+  color: #94A3B8;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── 4. Search and Filters Bar ─── */
+.exp-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.exp-search-wrap {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.exp-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94A3B8;
+  pointer-events: none;
+}
+
+.exp-search-input {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0.6rem 0.85rem 0.6rem 2.4rem;
+  font-size: 0.85rem;
+  color: #172033;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.exp-search-input:focus {
+  border-color: #0277B6;
+  box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.12);
+}
+
+.exp-search-clear {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.exp-select {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.85rem;
+  color: #172033;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  min-width: 140px;
+}
+
+.exp-select:focus {
+  border-color: #0277B6;
+}
+
+/* ─── 5. Category Semantic Badges ─── */
+.exp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.exp-badge-purchase {
+  background: rgba(2, 119, 182, 0.1);
+  color: #0277B6;
+}
+
+.exp-badge-transport,
+.exp-badge-transportation {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7C3AED;
+}
+
+.exp-badge-maintenance {
+  background: rgba(234, 88, 12, 0.1);
+  color: #EA580C;
+}
+
+.exp-badge-utilities,
+.exp-badge-electricity {
+  background: rgba(217, 119, 6, 0.1);
+  color: #D97706;
+}
+
+.exp-badge-salary,
+.exp-badge-salaries {
+  background: rgba(21, 128, 61, 0.1);
+  color: #15803D;
+}
+
+.exp-badge-packaging {
+  background: rgba(8, 145, 178, 0.1);
+  color: #0891B2;
+}
+
+.exp-badge-rent {
+  background: rgba(71, 85, 105, 0.1);
+  color: #475569;
+}
+
+.exp-badge-other {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748B;
+}
+
+.exp-badge-custom {
+  background: #F1F5F9;
+  color: #334155;
+}
+
+/* Payment mode badge */
+.exp-mode-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #0277B6;
+  background: rgba(2, 119, 182, 0.08);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── 6. Mobile Expense Transaction Cards (< 1024px) ─── */
+.exp-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-bottom: calc(72px + 2rem);
+}
+
+.exp-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 15px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.exp-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  border-color: #CBD5E1;
+}
+
+.exp-card:active {
+  transform: scale(0.99);
+}
+
+/* Top row: Category badge & Amount */
+.exp-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.exp-card-amount {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #DC2626;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Date row */
+.exp-card-date {
+  font-size: 0.72rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* Primary: Description */
+.exp-card-primary {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #172033;
+  line-height: 1.3;
+}
+
+/* Secondary: Vendor & Notes */
+.exp-card-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #64748B;
+}
+
+.exp-card-vendor-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.exp-card-notes-preview {
+  font-size: 0.74rem;
+  color: #94A3B8;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer: View Details & More button */
+.exp-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.45rem;
+  border-top: 1px dashed #F1F5F9;
+  margin-top: 0.15rem;
+}
+
+.exp-card-view-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0277B6;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  transition: color 0.15s;
+}
+
+.exp-card-view-btn:hover {
+  color: #025E91;
+}
+
+.exp-card-more-btn {
+  background: transparent;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.exp-card-more-btn:hover {
+  background: #F1F5F9;
+  color: #03045E;
+}
+
+/* ─── Popover Menu (3-dots) ─── */
+.exp-popover {
+  position: absolute;
+  right: 1rem;
+  bottom: 2.2rem;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(3, 4, 94, 0.15);
+  padding: 0.35rem;
+  z-index: 50;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  animation: expFadeIn 0.15s ease;
+}
+
+.exp-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  width: 100%;
+}
+
+.exp-popover-item:hover {
+  background: #F1F5F9;
+  color: #0277B6;
+}
+
+.exp-popover-item.danger {
+  color: #DC2626;
+}
+
+.exp-popover-item.danger:hover {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+/* ─── 7. Desktop Table View (>= 1024px) ─── */
+.exp-desktop-only {
+  display: none;
+}
+
+.exp-mobile-only {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .exp-desktop-only {
+    display: block;
+  }
+  .exp-mobile-only {
+    display: none;
+  }
+}
+
+.exp-table-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.exp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.exp-table th {
+  background: #F8FAFC;
+  color: #64748B;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #E2E8F0;
+  white-space: nowrap;
+}
+
+.exp-table th.right,
+.exp-table td.right {
+  text-align: right;
+}
+
+.exp-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #F1F5F9;
+  color: #172033;
+  vertical-align: middle;
+}
+
+.exp-table tr:last-child td {
+  border-bottom: none;
+}
+
+.exp-table tr:hover td {
+  background: #F8FAFC;
+}
+
+.exp-table-date {
+  font-size: 0.78rem;
+  color: #64748B;
+  white-space: nowrap;
+}
+
+.exp-table-desc {
+  font-weight: 600;
+  color: #03045E;
+}
+
+.exp-table-vendor {
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.exp-table-amount {
+  font-weight: 800;
+  color: #DC2626;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.exp-table-notes {
+  font-size: 0.76rem;
+  color: #64748B;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exp-table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.exp-table-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.exp-table-action-btn:hover {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #0277B6;
+}
+
+.exp-table-action-btn.delete:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #DC2626;
+}
+
+/* ─── 8. Bottom Sheet (Mobile Expense Details) ─── */
+.exp-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 94, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: expFadeIn 0.18s ease;
+}
+
+@media (min-width: 768px) {
+  .exp-sheet-overlay {
+    align-items: center;
+    padding: 1.5rem;
+  }
+}
+
+.exp-sheet {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 24px 24px 0 0;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: expSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 40px rgba(3, 4, 94, 0.2);
+}
+
+@media (min-width: 768px) {
+  .exp-sheet {
+    border-radius: 20px;
+    max-height: 85vh;
+    animation: expScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+.exp-sheet-handle-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0.65rem 0 0.25rem;
+}
+
+.exp-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #CBD5E1;
+}
+
+.exp-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem 0.5rem;
+}
+
+.exp-sheet-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #03045E;
+}
+
+.exp-sheet-close-btn {
+  background: #F1F5F9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748B;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exp-sheet-close-btn:hover {
+  background: #E2E8F0;
+  color: #03045E;
+}
+
+.exp-sheet-content {
+  padding: 0.85rem 1.25rem 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Hero Amount Box */
+.exp-detail-hero {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  border-radius: 16px;
+  padding: 1.15rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.exp-detail-hero-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.exp-detail-hero-amount {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #DC2626;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Key-value rows */
+.exp-detail-rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.exp-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.85rem;
+  gap: 0.75rem;
+}
+
+.exp-detail-row:last-child {
+  border-bottom: none;
+}
+
+.exp-detail-row-label {
+  color: #64748B;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.exp-detail-row-value {
+  color: #172033;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.exp-detail-notes-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0.85rem;
+  font-size: 0.85rem;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.exp-detail-notes-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.exp-sheet-footer {
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #FFFFFF;
+}
+
+.exp-sheet-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #FEE2E2;
+  color: #DC2626;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exp-sheet-delete-btn:hover {
+  background: #FCA5A5;
+  color: #991B1B;
+}
+
+.exp-sheet-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #0277B6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.15s;
+}
+
+.exp-sheet-edit-btn:hover {
+  background: #025E91;
+}
+
+/* ─── 9. Add / Edit Expense Modal ─── */
+.exp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 94, 0.48);
+  backdrop-filter: blur(4px);
+  z-index: 1060;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: expFadeIn 0.18s ease;
+}
+
+@media (min-width: 768px) {
+  .exp-modal-overlay {
+    align-items: center;
+    padding: 1.5rem;
+  }
+}
+
+.exp-modal {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 24px 24px 0 0;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -10px 40px rgba(3, 4, 94, 0.2);
+  animation: expSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .exp-modal {
+    border-radius: 20px;
+    max-height: 88vh;
+    animation: expScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+.exp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.exp-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #03045E;
+}
+
+.exp-modal-form {
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Prominent Amount Input */
+.exp-amount-field {
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: border-color 0.15s;
+}
+
+.exp-amount-field:focus-within {
+  border-color: #DC2626;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.exp-amount-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.exp-amount-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.exp-currency-symbol {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #DC2626;
+}
+
+.exp-amount-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #172033;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+  font-family: inherit;
+}
+
+.exp-amount-input::placeholder {
+  color: #CBD5E1;
+}
+
+/* Standard form fields */
+.exp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.exp-form-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.exp-form-input,
+.exp-form-select,
+.exp-form-textarea {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #172033;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.exp-form-input:focus,
+.exp-form-select:focus,
+.exp-form-textarea:focus {
+  border-color: #0277B6;
+  box-shadow: 0 0 0 3px rgba(2, 119, 182, 0.1);
+}
+
+.exp-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.exp-modal-footer {
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: #FFFFFF;
+}
+
+.exp-btn-cancel {
+  background: #F1F5F9;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exp-btn-cancel:hover {
+  background: #E2E8F0;
+}
+
+.exp-btn-save {
+  background: #DC2626;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.15s;
+}
+
+.exp-btn-save:hover {
+  background: #B91C1C;
+}
+
+.exp-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── 10. Delete Confirmation Modal ─── */
+.exp-delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 94, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: expFadeIn 0.15s ease;
+}
+
+.exp-delete-modal {
+  background: #FFFFFF;
+  border-radius: 20px;
+  max-width: 420px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0 16px 36px rgba(3, 4, 94, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  animation: expScaleUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exp-delete-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exp-delete-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #03045E;
+  margin: 0;
+}
+
+.exp-delete-desc {
+  font-size: 0.85rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.exp-delete-context-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 0.85rem;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+}
+
+.exp-delete-context-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.exp-delete-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.exp-delete-cancel-btn {
+  flex: 1;
+  background: #F1F5F9;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exp-delete-cancel-btn:hover {
+  background: #E2E8F0;
+}
+
+.exp-delete-confirm-btn {
+  flex: 1;
+  background: #DC2626;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exp-delete-confirm-btn:hover {
+  background: #B91C1C;
+}
+
+/* ─── 11. Empty State & Skeletons ─── */
+.exp-empty-card {
+  background: #FFFFFF;
+  border: 1px dashed #CBD5E1;
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: #64748B;
+}
+
+.exp-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #F8FAFC;
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exp-empty-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #03045E;
+  margin: 0;
+}
+
+.exp-empty-sub {
+  font-size: 0.82rem;
+  color: #64748B;
+  margin: 0;
+  max-width: 280px;
+}
+
+/* Shimmer Skeleton */
+.exp-skeleton {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: expShimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes expShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes expFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes expSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes expScaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ─── 12. Accessibility: Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .exp-sheet,
+  .exp-modal,
+  .exp-delete-modal,
+  .exp-sheet-overlay,
+  .exp-modal-overlay,
+  .exp-delete-modal-overlay,
+  .exp-card,
+  .exp-skeleton {
+    animation: none;
+    transition: none;
+  }
+}
+
