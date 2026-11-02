@@ -50,17 +50,6 @@ function pctChange(curr, prev) {
   return pct;
 }
 
-// ─── Period chips config ──────────────────────────────────────────────────────
-const PERIOD_CHIPS = [
-  { value: "today", label: "Today" },
-  { value: "yesterday", label: "Yesterday" },
-  { value: "last7days", label: "7 Days" },
-  { value: "last30days", label: "30 Days" },
-  { value: "thisMonth", label: "This Month" },
-  { value: "lastMonth", label: "Last Month" },
-  { value: "custom", label: "Custom" },
-];
-
 // ─── Custom recharts tooltip ──────────────────────────────────────────────────
 function SalesTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
@@ -104,10 +93,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   // State
-  const [period, setPeriod] = useState("today");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [customRange, setCustomRange] = useState({ start: "", end: "" });
-  const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -125,14 +111,10 @@ export default function Dashboard() {
 
   // Fetch dashboard data
   const fetchData = useCallback(() => {
-    let url = `/dashboard/summary?period=${period}`;
-    if (period === "custom" && customRange.start && customRange.end) {
-      url += `&startDate=${customRange.start}&endDate=${customRange.end}`;
-    }
     setLoading(true);
     setError(null);
     api
-      .get(url)
+      .get("/dashboard/summary")
       .then((res) => {
         setData(res.data);
       })
@@ -140,7 +122,7 @@ export default function Dashboard() {
         setError(err.response?.data?.message || "Failed to load dashboard"),
       )
       .finally(() => setLoading(false));
-  }, [period, customRange]);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -180,16 +162,6 @@ export default function Dashboard() {
     );
   };
 
-  // ── Period selector ──────────────────────────────────────────────────────────
-  const handlePeriodChip = (val) => {
-    setPeriod(val);
-    if (val === "custom") {
-      setShowCustomPicker(true);
-    } else {
-      setShowCustomPicker(false);
-    }
-  };
-
   // ── Render ───────────────────────────────────────────────────────────────────
 
   // Loading state
@@ -217,7 +189,6 @@ export default function Dashboard() {
             style={{ width: 40, height: 40, borderRadius: 12 }}
           />
         </div>
-        <div className="dash-skeleton dash-period-skeleton" />
         <div className="dash-kpi-grid">
           {[1, 2, 3, 4].map((i) => (
             <SkeletonCard key={i} h={118} />
@@ -391,64 +362,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── 2. Period Selector ────────────────────────────────────────────── */}
-      <div className="dash-period-wrap">
-        <div
-          className="dash-period-bar"
-          role="group"
-          aria-label="Select period"
-        >
-          {PERIOD_CHIPS.map((chip) => (
-            <button
-              key={chip.value}
-              type="button"
-              className={`dash-period-chip${period === chip.value ? " active" : ""}`}
-              onClick={() => handlePeriodChip(chip.value)}
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-        {showCustomPicker && (
-          <div className="dash-custom-range">
-            <input
-              type="date"
-              className="dash-date-input"
-              value={customRange.start}
-              max={customRange.end || dayjs().format("YYYY-MM-DD")}
-              onChange={(e) =>
-                setCustomRange((r) => ({ ...r, start: e.target.value }))
-              }
-              aria-label="Start date"
-            />
-            <span className="dash-date-sep">→</span>
-            <input
-              type="date"
-              className="dash-date-input"
-              value={customRange.end}
-              min={customRange.start}
-              max={dayjs().format("YYYY-MM-DD")}
-              onChange={(e) =>
-                setCustomRange((r) => ({ ...r, end: e.target.value }))
-              }
-              aria-label="End date"
-            />
-            {customRange.start && customRange.end && (
-              <button
-                type="button"
-                className="dash-apply-btn"
-                onClick={fetchData}
-              >
-                Apply
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ── 3. KPI Cards ─────────────────────────────────────────────────── */}
+      {/* ── 2. KPI Cards ──────────────────────────────────────────────────── */}
       <div className="dash-kpi-grid">
-        {/* Today's Sales */}
+        {/* All-time sales */}
         <Link to="/orders" className="dash-kpi-card blue">
           <div className="dash-kpi-top">
             <div className="dash-kpi-heading">
@@ -525,7 +441,7 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* ── 4. Net Cashflow Card ──────────────────────────────────────────── */}
+      {/* ── 3. Net Cashflow Card ──────────────────────────────────────────── */}
       <Link
         to="/reports"
         className={`dash-cashflow-card ${overview.netCashflow >= 0 ? "positive" : "negative"}`}
@@ -555,7 +471,7 @@ export default function Dashboard() {
         </div>
       </Link>
 
-      {/* ── 5. Charts ─────────────────────────────────────────────────────── */}
+      {/* ── 4. Charts ─────────────────────────────────────────────────────── */}
       <div className="dash-charts-row">
         {/* Sales Trend */}
         <div className="dash-chart-card">

@@ -39,7 +39,13 @@ function getPeriodBoundaries(period, startDate, endDate) {
   const now = nowIST();
   let start, end, prevStart, prevEnd, label;
 
-  if (period === 'yesterday') {
+  if (period === 'allTime') {
+    start = new Date(0);
+    end = now;
+    prevStart = new Date(0);
+    prevEnd = new Date(0);
+    label = 'All Time';
+  } else if (period === 'yesterday') {
     const yest = addDays(now, -1);
     start = startOfDayIST(yest);
     end = endOfDayIST(yest);
@@ -82,7 +88,8 @@ function getPeriodBoundaries(period, startDate, endDate) {
     prevStart = new Date(prevEnd.getTime() - rangeMs);
     label = startDate + ' \u2013 ' + endDate;
   } else {
-    // default: today
+    // Keep the endpoint backward compatible for callers that send an
+    // unsupported period while making the dashboard's explicit default all-time.
     start = startOfDayIST(now);
     end = endOfDayIST(now);
     prevStart = startOfDayIST(addDays(now, -1));
@@ -174,7 +181,7 @@ router.get('/summary', async (req, res) => {
   res.set('Cache-Control', 'private, max-age=15, stale-while-revalidate=30');
   // JWTs issued by auth routes store the user identifier as `id`.
   const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
-  const { period = 'today', startDate, endDate } = req.query;
+  const { period = 'allTime', startDate, endDate } = req.query;
 
   const { start, end, prevStart, prevEnd, label } = getPeriodBoundaries(period, startDate, endDate);
 
