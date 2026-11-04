@@ -8,6 +8,7 @@ const orderLineSchema = new mongoose.Schema({
   size: { type: String },
   cases: { type: Number, required: true, min: 1 },
   bottlesPerCase: { type: Number, default: BOTTLES_PER_CASE },
+  rateMode: { type: String, enum: ['case', 'bottle'], default: 'bottle' },
   pricePerBottle: { type: Number, required: true },
   subtotal: { type: Number, required: true },
 }, { _id: false });

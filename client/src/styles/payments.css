@@ -746,12 +746,13 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--palette-deep-navy), var(--palette-ocean-blue));
 }
 
 .pm-detail-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--palette-deep-navy);
+  color: #fff;
 }
 
 .pm-detail-close-btn {

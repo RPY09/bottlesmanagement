@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import { useAuth } from '../context/AuthContext';
 import '../styles/customers.css';
+import { emitDataChanged } from '../utils/dataEvents';
 import ConfirmDialog from '../components/ConfirmDialog';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -538,10 +539,12 @@ export function CustomerModal({ customer, onClose, onSave }) {
       if (isEdit) {
         const { data } = await api.put(`/customers/${customer._id}`, payload);
         onSave(data, 'edit');
+        emitDataChanged('customer');
         toast.success(`Updated customer: ${data.name}`);
       } else {
         const { data } = await api.post('/customers', payload);
         onSave(data, 'add');
+        emitDataChanged('customer');
         toast.success(`Customer created: ${data.name}`);
       }
       triggerClose();
@@ -1536,6 +1539,7 @@ export default function Customers() {
       await api.delete(`/customers/${id}`);
       setCustomers(prev => prev.filter(c => c._id !== id));
       if (detail?._id === id) setDetail(null);
+      emitDataChanged('customer');
       setDeleteCustomerId(null);
       toast.success('Customer deleted');
     } catch { toast.error('Failed to delete'); }

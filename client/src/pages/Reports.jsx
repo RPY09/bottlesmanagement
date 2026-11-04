@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import '../styles/reports.css';
+import { DATA_CHANGED_EVENT } from '../utils/dataEvents';
 import logo from '../assets/logo.png';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -125,6 +126,11 @@ export default function Reports() {
 
   useEffect(() => {
     fetchReport();
+  }, [fetchReport]);
+
+  useEffect(() => {
+    window.addEventListener(DATA_CHANGED_EVENT, fetchReport);
+    return () => window.removeEventListener(DATA_CHANGED_EVENT, fetchReport);
   }, [fetchReport]);
 
   // Sorted Top Customers

@@ -8,6 +8,8 @@ import {
   TrendingDown, Hash, AlertTriangle, ChevronRight, ChevronDown, Eye
 } from 'lucide-react';
 import '../styles/expenses.css';
+import { emitDataChanged } from '../utils/dataEvents';
+import { DATA_CHANGED_EVENT } from '../utils/dataEvents';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const STANDARD_CATEGORIES = [
@@ -108,10 +110,12 @@ function ExpenseModal({ expense, onClose, onSave }) {
       if (isEdit) {
         const { data } = await api.put(`/expenses/${expense._id}`, payload);
         onSave(data, 'edit');
+        emitDataChanged('expense');
         toast.success('Expense updated successfully');
       } else {
         const { data } = await api.post('/expenses', payload);
         onSave(data, 'add');
+        emitDataChanged('expense');
         toast.success('Expense added successfully');
       }
       onClose();
@@ -677,6 +681,14 @@ export default function Expenses() {
     fetchExpenses();
   }, [fetchExpenses]);
 
+  useEffect(() => {
+    const handleDataChanged = (event) => {
+      if (event.detail?.resource === 'expense') fetchExpenses();
+    };
+    window.addEventListener(DATA_CHANGED_EVENT, handleDataChanged);
+    return () => window.removeEventListener(DATA_CHANGED_EVENT, handleDataChanged);
+  }, [fetchExpenses]);
+
   // Handle period selector
   const handlePeriodChip = (val) => {
     setPeriod(val);
@@ -795,6 +807,7 @@ export default function Expenses() {
       await api.delete(`/expenses/${id}`);
       setExpenses(prev => prev.filter(e => e._id !== id));
       toast.success('Expense deleted successfully');
+      emitDataChanged('expense');
       setDeleteExpense(null);
     } catch {
       toast.error('Failed to delete expense');

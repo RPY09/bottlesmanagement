@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import {
@@ -40,6 +41,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
+import { DATA_CHANGED_EVENT } from "../utils/dataEvents";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
@@ -90,6 +92,7 @@ function DeltaBadge({ curr, prev }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // State
@@ -126,6 +129,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    window.addEventListener(DATA_CHANGED_EVENT, fetchData);
+    return () => window.removeEventListener(DATA_CHANGED_EVENT, fetchData);
   }, [fetchData]);
 
   // WhatsApp reminder
@@ -212,7 +220,7 @@ export default function Dashboard() {
         <div className="dash-error-card">
           <AlertCircle size={32} />
           <div>
-            <div className="dash-error-title">Dashboard failed to load</div>
+            <div className="dash-error-title">{t("Dashboard failed to load")}</div>
             <div className="dash-error-sub">{error}</div>
           </div>
           <button type="button" className="dash-retry-btn" onClick={fetchData}>
@@ -310,7 +318,7 @@ export default function Dashboard() {
             <div className="dash-notifications-popover" role="status">
               <div className="dash-notifications-header">
                 <div>
-                  <strong>Payment alerts</strong>
+                  <strong>{t("Payment alerts")}</strong>
                   <span>
                     {pendingDues?.customerCount || 0} customer
                     {pendingDues?.customerCount === 1 ? "" : "s"} with pending
@@ -371,7 +379,7 @@ export default function Dashboard() {
               <div className="dash-kpi-icon">
                 <ShoppingCart size={17} />
               </div>
-              <span className="dash-kpi-label">Sales</span>
+              <span className="dash-kpi-label">{t("Sales")}</span>
             </div>
             <DeltaBadge
               curr={overview.totalSales}
@@ -391,7 +399,7 @@ export default function Dashboard() {
               <div className="dash-kpi-icon">
                 <Wallet size={17} />
               </div>
-              <span className="dash-kpi-label">Collected</span>
+              <span className="dash-kpi-label">{t("Collected")}</span>
             </div>
             <DeltaBadge
               curr={overview.paymentsReceived}
@@ -411,7 +419,7 @@ export default function Dashboard() {
               <div className="dash-kpi-icon">
                 <AlertCircle size={17} />
               </div>
-              <span className="dash-kpi-label">Pending</span>
+              <span className="dash-kpi-label">{t("Pending")}</span>
             </div>
             <span
               className={`dash-kpi-status ${overview.pendingBalance > 0 ? "danger" : "ok"}`}
@@ -432,12 +440,12 @@ export default function Dashboard() {
               <div className="dash-kpi-icon">
                 <Receipt size={17} />
               </div>
-              <span className="dash-kpi-label">Expenses</span>
+              <span className="dash-kpi-label">{t("Expenses")}</span>
             </div>
             <DeltaBadge curr={overview.expenses} prev={prevOverview.expenses} />
           </div>
           <div className="dash-kpi-value">{fmt(overview.expenses)}</div>
-          <div className="dash-kpi-sub">Operating costs</div>
+          <div className="dash-kpi-sub">{t("Operating costs")}</div>
         </Link>
       </div>
 
@@ -455,7 +463,7 @@ export default function Dashboard() {
             )}
           </div>
           <div>
-            <div className="dash-cashflow-label">Net Cashflow</div>
+            <div className="dash-cashflow-label">{t("Net Cashflow")}</div>
             <div className="dash-cashflow-sub">
               Payments Received − Expenses
             </div>
@@ -477,8 +485,8 @@ export default function Dashboard() {
         <div className="dash-chart-card">
           <div className="dash-card-header">
             <div>
-              <div className="dash-card-title">Sales Trend</div>
-              <div className="dash-card-sub">Daily revenue (last 30 days)</div>
+              <div className="dash-card-title">{t("Sales Trend")}</div>
+              <div className="dash-card-sub">{t("Daily revenue (last 30 days)")}</div>
             </div>
             <div className="dash-time-selector">
               <button
@@ -500,7 +508,7 @@ export default function Dashboard() {
           {trendData.length === 0 ? (
             <div className="dash-empty">
               <Activity size={28} />
-              <span>No sales data</span>
+              <span>{t("No sales data")}</span>
             </div>
           ) : (
             <div style={{ height: 160, width: "100%" }}>
@@ -580,8 +588,8 @@ export default function Dashboard() {
         <div className="dash-chart-card">
           <div className="dash-card-header">
             <div>
-              <div className="dash-card-title">Product Share</div>
-              <div className="dash-card-sub">By case volume</div>
+              <div className="dash-card-title">{t("Product Share")}</div>
+              <div className="dash-card-sub">{t("By case volume")}</div>
             </div>
             <span className="dash-chart-badge">
               <Package size={12} style={{ marginRight: 3 }} />
@@ -591,7 +599,7 @@ export default function Dashboard() {
           {productBarData.length === 0 ? (
             <div className="dash-empty">
               <Package size={28} />
-              <span>No product data</span>
+              <span>{t("No product data")}</span>
             </div>
           ) : (
             <div style={{ height: 160, width: "100%" }}>
@@ -663,8 +671,8 @@ export default function Dashboard() {
               <Wallet size={16} />
             </div>
             <div>
-              <div className="dash-card-title">Payment Collections</div>
-              <div className="dash-card-sub">Collected vs Outstanding</div>
+              <div className="dash-card-title">{t("Payment Collections")}</div>
+              <div className="dash-card-sub">{t("Collected vs Outstanding")}</div>
             </div>
           </div>
           <span className="dash-chart-badge green">
@@ -694,7 +702,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
             <div className="dash-donut-center">
               <div className="dash-donut-pct">{collectionRate}%</div>
-              <div className="dash-donut-lbl">Rate</div>
+              <div className="dash-donut-lbl">{t("Rate")}</div>
             </div>
           </div>
           <div className="dash-collections-stats">
@@ -718,7 +726,7 @@ export default function Dashboard() {
             </div>
             <div className="dash-stat-divider" />
             <div className="dash-stat-row total">
-              <span>Orders Billed</span>
+              <span>{t("Orders Billed")}</span>
               <span
                 style={{
                   fontWeight: 800,
@@ -744,7 +752,7 @@ export default function Dashboard() {
                 <Users size={15} />
               </div>
               <div>
-                <div className="dash-card-title">Top Customers</div>
+                <div className="dash-card-title">{t("Top Customers")}</div>
                 <div className="dash-card-sub">
                   By collections · {data.period?.label}
                 </div>
@@ -783,7 +791,7 @@ export default function Dashboard() {
               <AlertCircle size={15} strokeWidth={2.4} />
             </div>
             <div>
-              <div className="dash-card-title">Pending Payment Dues</div>
+              <div className="dash-card-title">{t("Pending Payment Dues")}</div>
               <div className="dash-card-sub">
                 Follow up before balances become overdue
               </div>
@@ -800,21 +808,21 @@ export default function Dashboard() {
             <div className="dash-dues-stat-val">
               {fmt(pendingDues?.totalOutstanding)}
             </div>
-            <div className="dash-dues-stat-lbl">Total outstanding</div>
+            <div className="dash-dues-stat-lbl">{t("Total outstanding")}</div>
           </div>
           <div className="dash-dues-stat-sep" />
           <div className="dash-dues-stat">
             <div className="dash-dues-stat-val">
               {pendingDues?.customerCount || 0}
             </div>
-            <div className="dash-dues-stat-lbl">Customers</div>
+            <div className="dash-dues-stat-lbl">{t("Customers")}</div>
           </div>
           <div className="dash-dues-stat-sep" />
           <div className="dash-dues-stat">
             <div className="dash-dues-stat-val">
               {pendingDues?.unpaidOrderCount || 0}
             </div>
-            <div className="dash-dues-stat-lbl">Orders</div>
+            <div className="dash-dues-stat-lbl">{t("Orders")}</div>
           </div>
         </div>
 
@@ -868,7 +876,7 @@ export default function Dashboard() {
               <Activity size={15} />
             </div>
             <div>
-              <div className="dash-card-title">Recent Activity</div>
+              <div className="dash-card-title">{t("Recent Activity")}</div>
               <div className="dash-card-sub">
                 Latest orders, payments &amp; expenses
               </div>
@@ -938,7 +946,7 @@ export default function Dashboard() {
             ) : (
               <div className="dash-empty">
                 <FileText size={26} />
-                <span>No recent orders</span>
+                <span>{t("No recent orders")}</span>
               </div>
             )}
             <Link to="/orders" className="dash-view-all-link">
@@ -980,7 +988,7 @@ export default function Dashboard() {
             ) : (
               <div className="dash-empty">
                 <Wallet size={26} />
-                <span>No recent payments</span>
+                <span>{t("No recent payments")}</span>
               </div>
             )}
             <Link to="/payments" className="dash-view-all-link">
@@ -1019,7 +1027,7 @@ export default function Dashboard() {
             ) : (
               <div className="dash-empty">
                 <FileText size={26} />
-                <span>No recent expenses</span>
+                <span>{t("No recent expenses")}</span>
               </div>
             )}
             <Link to="/expenses" className="dash-view-all-link">

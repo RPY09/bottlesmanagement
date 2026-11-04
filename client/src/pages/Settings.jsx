@@ -2,11 +2,13 @@ import { useEffect, useState, useMemo } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Save, User, Building2, Package, Plus, Trash2, Edit2,
   Archive, CheckCircle2, RotateCcw, AlertCircle, Tag
 } from 'lucide-react';
 import '../styles/settings.css';
+import { emitDataChanged } from '../utils/dataEvents';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -27,6 +29,7 @@ function getInitials(name) {
 // ─── Main Settings Component ─────────────────────────────────────────────────
 export default function Settings() {
   const { user, updateUser } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
 
   // ── Products State ──
   const [products, setProducts] = useState([]);
@@ -71,6 +74,20 @@ export default function Settings() {
     address: '',
   });
   const [savingBusiness, setSavingBusiness] = useState(false);
+  const [savingLanguage, setSavingLanguage] = useState(false);
+  const showProductsSection = false;
+
+  const handleLanguageChange = async (e) => {
+    setSavingLanguage(true);
+    try {
+      await setLanguage(e.target.value);
+      toast.success(t('Language updated'));
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('Failed to update language'));
+    } finally {
+      setSavingLanguage(false);
+    }
+  };
 
   // ── Fetch Profile & Products on Mount ──
   useEffect(() => {
@@ -163,11 +180,13 @@ export default function Settings() {
       if (editingProductId) {
         const { data } = await api.put(`/products/${editingProductId}`, payload);
         setProducts(prev => prev.map(p => p._id === editingProductId ? data : p));
+        emitDataChanged('product');
         toast.success('Product updated successfully!');
         setEditingProductId(null);
       } else {
         const { data } = await api.post('/products', payload);
         setProducts(prev => [...prev, data]);
+        emitDataChanged('product');
         toast.success('Product added successfully!');
       }
       setProductForm({ name: '', size: '500ml', bottlesPerCase: 12, pricePerUnit: '' });
@@ -201,6 +220,7 @@ export default function Settings() {
     try {
       const { data } = await api.put(`/products/${product._id}`, { isActive: nextStatus });
       setProducts(prev => prev.map(p => p._id === product._id ? data : p));
+      emitDataChanged('product');
       toast.success(nextStatus ? 'Product reactivated!' : 'Product archived!');
     } catch {
       toast.error('Failed to change product status');
@@ -216,9 +236,11 @@ export default function Settings() {
       if (data.archived) {
         toast('Archived to preserve historical orders', { icon: '📦' });
         setProducts(prev => prev.map(p => p._id === product._id ? { ...p, isActive: false } : p));
+        emitDataChanged('product');
       } else {
         toast.success('Product permanently deleted');
         setProducts(prev => prev.filter(p => p._id !== product._id));
+        emitDataChanged('product');
       }
       setDeleteProduct(null);
     } catch {
@@ -292,11 +314,34 @@ export default function Settings() {
       {/* ─── Page Header ─── */}
       <div className="set-header">
         <div className="set-title-wrap">
-          <h1 className="set-title">Settings</h1>
-          <p className="set-subtitle">Manage product catalogue, pricing, and business credentials</p>
+          <h1 className="set-title">{t('Settings')}</h1>
+          <p className="set-subtitle">{t('Manage product catalogue, pricing, and business credentials')}</p>
         </div>
       </div>
 
+      <div className="set-card set-language-card">
+        <div className="set-card-header">
+          <div className="set-card-title-group">
+            <div className="set-card-icon blue">文</div>
+            <div>
+              <h2 className="set-card-title">{t('Language')}</h2>
+              <p className="set-card-sub">{t('Choose the language for the application.')}</p>
+            </div>
+          </div>
+          <select
+            className="set-form-select set-language-select"
+            value={language}
+            onChange={handleLanguageChange}
+            disabled={savingLanguage}
+            aria-label={t('Language preference')}
+          >
+            <option value="en">{t('English')}</option>
+            <option value="te">{t('Telugu')}</option>
+          </select>
+        </div>
+      </div>
+
+      {showProductsSection && (<>
       {/* ─── SECTION 1: Products & Prices ─── */}
       <div className="set-card">
         <div className="set-card-header">
@@ -364,7 +409,7 @@ export default function Settings() {
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="any"
               required
               placeholder="0.00"
               className="set-form-input"
@@ -444,7 +489,7 @@ export default function Settings() {
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="any"
               required
               placeholder="0.00"
               className="set-form-input"
@@ -635,6 +680,7 @@ export default function Settings() {
           </>
         )}
       </div>
+      </>)}
 
       {/* ─── PROFILES CONTAINER: Personal (Section 2) & Business (Section 3) ─── */}
       <div className="set-profiles-grid">

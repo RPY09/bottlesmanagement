@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   LayoutDashboard,
   Users,
@@ -37,6 +38,7 @@ const mainNavItems = [
   { label: 'Payments', icon: Wallet, to: '/payments' },
   { label: 'Expenses', icon: Receipt, to: '/expenses' },
   { label: 'Reports', icon: BarChart3, to: '/reports' },
+  { label: 'Products & Prices', icon: PackagePlus, to: '/products-prices' },
 ];
 const bottomNavPaths = ['/', '/customers', '/orders', '/expenses'];
 
@@ -45,8 +47,13 @@ const DOUBLE_TAP_THRESHOLD = 300;
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname, location.search]);
 
   // Desktop sidebar collapse state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -162,49 +169,55 @@ export default function Layout() {
     if (path === '/') {
       const firstName = user?.name ? user.name.split(' ')[0] : 'Admin';
       return {
-        title: `Good ${timeOfDay}, ${firstName}`,
-        subtitle: user?.businessName ? `${user.businessName} · Overview` : 'Business Overview',
+        title: `${t(`Good ${timeOfDay}`)}, ${firstName}`,
+        subtitle: user?.businessName ? `${user.businessName} · ${t('Business Overview')}` : t('Business Overview'),
       };
     }
     if (path.startsWith('/customers')) {
       return {
-        title: 'Customer Management',
+        title: t('Customer Management'),
         subtitle: 'Directory, addresses & balance accounts',
       };
     }
     if (path.startsWith('/orders')) {
       return {
-        title: 'Order Management',
+        title: t('Order Management'),
         subtitle: 'Sales orders, fulfillment & invoices',
       };
     }
     if (path.startsWith('/payments')) {
       return {
-        title: 'Payment Transactions',
+        title: t('Payment Transactions'),
         subtitle: 'Payment history, modes & collections',
       };
     }
     if (path.startsWith('/expenses')) {
       return {
-        title: 'Expense Management',
+        title: t('Expense Management'),
         subtitle: 'Operating costs, logs & expenditures',
       };
     }
     if (path.startsWith('/reports')) {
       return {
-        title: 'Business Reports',
+        title: t('Business Reports'),
         subtitle: 'Analytics, revenue charts & summaries',
+      };
+    }
+    if (path.startsWith('/products-prices')) {
+      return {
+        title: 'Products & Prices',
+        subtitle: 'Product catalogue, case sizes & selling rates',
       };
     }
     if (path.startsWith('/reminders')) {
       return {
-        title: 'Payment Reminders',
+        title: t('Payment Reminders'),
         subtitle: 'Automated & WhatsApp follow-ups',
       };
     }
     if (path.startsWith('/settings')) {
       return {
-        title: 'Settings & Profile',
+        title: t('Settings & Profile'),
         subtitle: 'Business configuration & product catalogue',
       };
     }
@@ -247,6 +260,7 @@ export default function Layout() {
     { label: 'Payments', category: 'Navigation', icon: Wallet, action: () => { setPaletteOpen(false); navigate('/payments'); } },
     { label: 'Expenses', category: 'Navigation', icon: Receipt, action: () => { setPaletteOpen(false); navigate('/expenses'); } },
     { label: 'Reports', category: 'Navigation', icon: BarChart3, action: () => { setPaletteOpen(false); navigate('/reports'); } },
+    { label: 'Products & Prices', category: 'Navigation', icon: PackagePlus, action: () => { setPaletteOpen(false); navigate('/products-prices'); } },
     { label: 'Settings & Profile', category: 'Navigation', icon: Settings, action: () => { setPaletteOpen(false); navigate('/settings'); } },
   ].filter((item) => item.label.toLowerCase().includes(paletteQuery.toLowerCase()));
 
@@ -293,7 +307,7 @@ export default function Layout() {
               title={label}
             >
               <Icon size={19} />
-              <span>{label}</span>
+              <span>{t(label)}</span>
             </NavLink>
           ))}
         </nav>
@@ -312,7 +326,7 @@ export default function Layout() {
             <div className="hbm-sidebar-user-info">
               <div className="hbm-sidebar-username">{user?.name || 'Admin'}</div>
               <div className="hbm-sidebar-usersub">
-                <Settings size={12} /> Settings &amp; Profile
+                <Settings size={12} /> {t('Settings & Profile')}
               </div>
             </div>
           </div>
@@ -364,7 +378,7 @@ export default function Layout() {
               aria-label="Global search"
             >
               <Search size={16} />
-              <span className="hbm-search-label">Search anything...</span>
+              <span className="hbm-search-label">{t('Search anything...')}</span>
               <kbd className="hbm-search-kbd">⌘K</kbd>
             </button>
 
@@ -484,7 +498,7 @@ export default function Layout() {
             <div className="hbm-bottom-icon">
               <LayoutDashboard />
             </div>
-            <span className="hbm-bottom-label">Dashboard</span>
+            <span className="hbm-bottom-label">{t('Dashboard')}</span>
           </NavLink>
 
           {/* 2. Customers */}
@@ -497,7 +511,7 @@ export default function Layout() {
             <div className="hbm-bottom-icon">
               <Users />
             </div>
-            <span className="hbm-bottom-label">Customers</span>
+            <span className="hbm-bottom-label">{t('Customers')}</span>
           </NavLink>
 
           {/* 3. Central Floating Plus Button */}
@@ -536,7 +550,7 @@ export default function Layout() {
             <div className="hbm-bottom-icon">
               <Milk />
             </div>
-            <span className="hbm-bottom-label">Orders</span>
+            <span className="hbm-bottom-label">{t('Orders')}</span>
           </NavLink>
 
           {/* 5. Expenses */}
@@ -549,7 +563,7 @@ export default function Layout() {
             <div className="hbm-bottom-icon">
               <Receipt />
             </div>
-            <span className="hbm-bottom-label">Expenses</span>
+            <span className="hbm-bottom-label">{t('Expenses')}</span>
           </NavLink>
         </nav>
       </div>
@@ -627,7 +641,7 @@ export default function Layout() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="hbm-drawer-header">
-              <span className="hbm-drawer-title">Navigation Menu</span>
+              <span className="hbm-drawer-title">{t('Navigation Menu')}</span>
               <button
                 type="button"
                 className="hbm-drawer-close-btn"
@@ -662,7 +676,7 @@ export default function Layout() {
                   onClick={() => setMobileDrawerOpen(false)}
                 >
                   <Icon size={18} />
-                  <span>{label}</span>
+                  <span>{t(label)}</span>
                 </NavLink>
               ))}
 
@@ -672,7 +686,7 @@ export default function Layout() {
                 onClick={() => setMobileDrawerOpen(false)}
               >
                 <Settings size={18} />
-                <span>Settings &amp; Profile</span>
+                <span>{t('Settings & Profile')}</span>
               </NavLink>
             </div>
 

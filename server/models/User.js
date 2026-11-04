@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   upiId: { type: String },
   address: { type: String },
   logo: { type: String },
+  language: { type: String, enum: ['en', 'te'], default: 'en' },
 }, { timestamps: true });
 
 userSchema.pre('save', async function () {

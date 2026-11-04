@@ -46,7 +46,7 @@ function ProductModal({ product, onClose, onSave }) {
           </div>
           <div className="form-group">
             <label className="form-label">Price Per Unit (₹) *</label>
-            <input className="form-input" type="number" min="0" step="0.5" placeholder="10.00" value={form.pricePerUnit} onChange={e => setForm({ ...form, pricePerUnit: e.target.value })} required />
+            <input className="form-input" type="number" min="0" step="any" placeholder="10.00" value={form.pricePerUnit} onChange={e => setForm({ ...form, pricePerUnit: e.target.value })} required />
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-outline" onClick={onClose}>Cancel</button>

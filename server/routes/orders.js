@@ -83,7 +83,17 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { customer, lines, status, deliveryDate, notes, paymentStatus, paidAmount, paymentMode } = req.body;
+  const { customer, lines, status, deliveryDate, notes, paymentStatus, paidAmount, paymentMode, orderDate } = req.body;
+  let createdAt;
+  if (orderDate) {
+    createdAt = new Date(`${orderDate}T12:00:00`);
+    if (Number.isNaN(createdAt.getTime())) {
+      return res.status(400).json({ message: 'Please provide a valid order date' });
+    }
+    if (createdAt > new Date()) {
+      return res.status(400).json({ message: 'Order date cannot be in the future' });
+    }
+  }
 
   const resolvedLines = await Promise.all(lines.map(async (line) => {
     const product = await Product.findOne({ _id: line.product, user: req.user.id });
@@ -100,6 +110,7 @@ router.post('/', async (req, res) => {
       size: product.size,
       cases,
       bottlesPerCase,
+      rateMode: line.rateMode === 'case' ? 'case' : 'bottle',
       pricePerBottle,
       subtotal,
     };
@@ -120,6 +131,7 @@ router.post('/', async (req, res) => {
     status: status || 'pending',
     deliveryDate,
     notes,
+    ...(createdAt ? { createdAt } : {}),
   });
 
   if (initialPaid > 0) {
@@ -129,7 +141,7 @@ router.post('/', async (req, res) => {
       order: order._id,
       amount: initialPaid,
       mode: (paymentMode || 'cash').toLowerCase(),
-      date: new Date(),
+      date: createdAt || new Date(),
       notes: `Payment recorded upon order creation (${order.orderNumber})`,
     });
   }
@@ -187,6 +199,7 @@ router.put('/:id', async (req, res) => {
         size: line.size || product?.size,
         cases,
         bottlesPerCase,
+        rateMode: line.rateMode === 'case' ? 'case' : 'bottle',
         pricePerBottle,
         subtotal,
       };

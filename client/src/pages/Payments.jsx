@@ -18,6 +18,8 @@ import {
   ArrowDownLeft,
 } from 'lucide-react';
 import '../styles/payments.css';
+import { emitDataChanged } from '../utils/dataEvents';
+import { DATA_CHANGED_EVENT } from '../utils/dataEvents';
 
 /* ─── Helper: Initials Avatar ─── */
 function getInitials(name) {
@@ -113,6 +115,7 @@ function PaymentModal({ orders, customers, onClose, onSave }) {
         notes: form.notes?.trim() || undefined,
       });
       onSave(data);
+      emitDataChanged('payment');
       toast.success('Payment recorded successfully!');
       onClose();
     } catch (err) {
@@ -709,6 +712,21 @@ export default function Payments() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const handleDataChanged = (event) => {
+      if (!['payment', 'order', 'customer'].includes(event.detail?.resource)) return;
+      Promise.all([api.get('/payments'), api.get('/orders'), api.get('/customers')])
+        .then(([p, o, c]) => {
+          setPayments(p.data || []);
+          setOrders(o.data || []);
+          setCustomers(c.data || []);
+        })
+        .catch(() => toast.error('Failed to refresh payments data'));
+    };
+    window.addEventListener(DATA_CHANGED_EVENT, handleDataChanged);
+    return () => window.removeEventListener(DATA_CHANGED_EVENT, handleDataChanged);
+  }, []);
+
   // Filtered payments list
   const filtered = useMemo(() => {
     return payments.filter((p) => {
@@ -750,6 +768,7 @@ export default function Payments() {
         setSelectedDetailPayment(null);
       }
       toast.success('Payment deleted');
+      emitDataChanged('payment');
       setPaymentToDelete(null);
     } catch {
       toast.error('Failed to delete payment');

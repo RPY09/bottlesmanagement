@@ -18,6 +18,18 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (!token) return;
+    api.get('/auth/profile')
+      .then(({ data }) => {
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
+      })
+      .catch(() => {
+        // Retain the cached profile when the refresh request is unavailable.
+      });
+  }, [token]);
+
   const login = (tokenValue, userData) => {
     setToken(tokenValue);
     setUser(userData);

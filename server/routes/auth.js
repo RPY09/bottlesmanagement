@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.status(201).json({
     token,
-    user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName }
+    user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, language: user.language }
   });
 });
 
@@ -26,7 +26,7 @@ router.post('/login', async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.json({
     token,
-    user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, upiId: user.upiId, fssaiNo: user.fssaiNo }
+    user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, upiId: user.upiId, fssaiNo: user.fssaiNo, language: user.language }
   });
 });
 
@@ -41,6 +41,9 @@ router.get('/profile', authenticate, async (req, res) => {
 router.put('/profile', authenticate, async (req, res) => {
   const updates = req.body;
   delete updates.password;
+  if (updates.language && !['en', 'te'].includes(updates.language)) {
+    return res.status(400).json({ message: 'Unsupported language' });
+  }
   const user = await User.findByIdAndUpdate(req.user.id, updates, { returnDocument: 'after' }).select('-password');
   res.json(user);
 });

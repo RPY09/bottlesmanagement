@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -11,6 +12,7 @@ import Payments from './pages/Payments';
 import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import ProductsPrices from './pages/ProductsPrices';
 import Reminders from './pages/Reminders';
 
 function ProtectedRoute({ children }) {
@@ -26,7 +28,8 @@ function PublicRoute({ children }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>
         <Toaster position="top-right" toastOptions={{
           style: { background: '#FFFFFF', color: 'var(--palette-ocean-blue)', border: '1px solid rgba(2, 119, 182, 0.2)', boxShadow: '0 4px 16px rgba(2, 119, 182, 0.12)' },
           success: { iconTheme: { primary: '#16a34a', secondary: '#ffffff' } },
@@ -42,11 +45,13 @@ export default function App() {
             <Route path="payments" element={<Payments />} />
             <Route path="expenses" element={<Expenses />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="products-prices" element={<ProductsPrices />} />
             <Route path="reminders" element={<Reminders />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </LanguageProvider>
     </AuthProvider>
   );
 }
