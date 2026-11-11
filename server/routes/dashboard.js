@@ -313,7 +313,7 @@ router.get('/summary', async (req, res) => {
 
 // ─── GET / (legacy — preserved for existing Dashboard.jsx and Reports.jsx) ───
 router.get('/', async (req, res) => {
-  const userId = req.user.id || req.user._id;
+  const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -412,7 +412,7 @@ router.get('/monthly-report', async (req, res) => {
   const m = parseInt(month) || new Date().getMonth() + 1;
   const start = new Date(y, m - 1, 1);
   const end = new Date(y, m, 0, 23, 59, 59);
-  const userId = req.user.id || req.user._id;
+  const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
 
   const orders = await Order.find({ user: userId, createdAt: { $gte: start, $lte: end } });
   const payments = await Payment.find({ user: userId, date: { $gte: start, $lte: end } });

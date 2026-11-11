@@ -79,7 +79,22 @@ if (!MONGO_URI || MONGO_URI.includes('<username>')) {
   console.error('   5. Replace <password> with your actual password\n');
 } else {
   mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ Connected to MongoDB Atlas'))
+    .then(async () => {
+      console.log('✅ Connected to MongoDB Atlas');
+      // Drop legacy global orderNumber_1 index so multi-tenant accounts can have their own ORD001, ORD002...
+      try {
+        const orderCollection = mongoose.connection.collection('orders');
+        const indexes = await orderCollection.indexes();
+        const hasLegacyIndex = indexes.some(idx => idx.name === 'orderNumber_1');
+        if (hasLegacyIndex) {
+          await orderCollection.dropIndex('orderNumber_1');
+          console.log('🧹 Dropped legacy global unique index: orderNumber_1 (switched to user-scoped order numbers)');
+        }
+      } catch (dropErr) {
+        // Ignore if collection does not exist or index already dropped
+        console.log('Index sync check:', dropErr.message);
+      }
+    })
     .catch(err => {
       console.error('❌ MongoDB connection failed:', err.message);
       console.error('👉 Check your MONGODB_URI in server/.env');
