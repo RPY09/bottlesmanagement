@@ -30,11 +30,13 @@ export function AuthProvider({ children }) {
       });
   }, [token]);
 
-  const login = (tokenValue, userData) => {
+  const login = (tokenValue, userData, refreshTokenValue) => {
     setToken(tokenValue);
     setUser(userData);
     localStorage.setItem('token', tokenValue);
-    localStorage.removeItem('refreshToken'); // Ensure no sensitive refresh token is kept in localStorage
+    if (refreshTokenValue) {
+      localStorage.setItem('refreshToken', refreshTokenValue);
+    }
     localStorage.setItem('user', JSON.stringify(userData));
     api.defaults.headers.common['Authorization'] = `Bearer ${tokenValue}`;
   };

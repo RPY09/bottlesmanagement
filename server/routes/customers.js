@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const Customer = require('../models/Customer');
 const Order = require('../models/Order');
@@ -60,29 +60,37 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const userId = req.user.id || req.user._id;
-  const customerQuery = Customer.findOne({ _id: req.params.id, user: userId })
+  const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
+  const customerId = new mongoose.Types.ObjectId(req.params.id);
+
+  const customerQuery = Customer.findOne({ _id: customerId, user: userId })
     .select('_id name phone address notes isActive createdAt')
     .lean();
-  const orderQuery = Order.find({ customer: req.params.id, user: userId })
+
+  // Limit recent order history to 50 items to prevent heap bloat on long-time customers
+  const orderQuery = Order.find({ customer: customerId, user: userId })
     .select('_id orderNumber lines.productName lines.size lines.cases lines.bottlesPerCase lines.pricePerBottle lines.subtotal totalAmount paidAmount status paymentStatus notes createdAt')
     .sort({ createdAt: -1 })
+    .limit(50)
     .lean();
+
+  // Calculate customer lifetime totals entirely inside MongoDB aggregation
   const summaryQuery = Order.aggregate([
-    { $match: { customer: new mongoose.Types.ObjectId(req.params.id), user: new mongoose.Types.ObjectId(userId) } },
+    { $match: { customer: customerId, user: userId, status: { $ne: 'cancelled' } } },
     {
       $group: {
         _id: null,
         totalOrders: { $sum: 1 },
         totalValue: { $sum: '$totalAmount' },
         totalPaid: { $sum: { $ifNull: ['$paidAmount', 0] } },
+        pending: { $sum: { $max: [{ $subtract: ['$totalAmount', { $ifNull: ['$paidAmount', 0] }] }, 0] } },
       },
     },
   ]);
 
   const [customer, orders, summaryRows] = await Promise.all([customerQuery, orderQuery, summaryQuery]);
   if (!customer) return res.status(404).json({ message: 'Customer not found' });
-  const { totalOrders = 0, totalValue = 0, totalPaid = 0 } = summaryRows[0] || {};
+  const { totalOrders = 0, totalValue = 0, totalPaid = 0, pending = 0 } = summaryRows[0] || {};
   res.json({
     customer,
     orders,
@@ -90,7 +98,7 @@ router.get('/:id', async (req, res) => {
       totalOrders,
       totalValue,
       totalPaid,
-      pending: totalValue - totalPaid,
+      pending,
     },
   });
 });

@@ -41,11 +41,13 @@ router.post('/register', async (req, res) => {
   const user = await User.create({ name, email, password, businessName, fssaiNo, phone, upiId });
   const { token, refreshToken } = generateTokens(user._id);
 
-  // Set secure HttpOnly cookie for refresh token
+  // Set secure HttpOnly cookie (primary for supported browsers)
   res.cookie('refreshToken', refreshToken, getCookieOptions());
 
+  // Return refreshToken in body as resilient fallback for cross-domain browsers that block 3rd-party cookies (e.g. iOS Safari ITP)
   res.status(201).json({
     token,
+    refreshToken,
     user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, language: user.language }
   });
 });
@@ -59,19 +61,21 @@ router.post('/login', async (req, res) => {
   if (!match) return res.status(401).json({ message: 'Invalid credentials' });
   const { token, refreshToken } = generateTokens(user._id);
 
-  // Set secure HttpOnly cookie for refresh token
+  // Set secure HttpOnly cookie (primary for supported browsers)
   res.cookie('refreshToken', refreshToken, getCookieOptions());
 
+  // Return refreshToken in body as resilient fallback for cross-domain browsers that block 3rd-party cookies (e.g. iOS Safari ITP)
   res.json({
     token,
+    refreshToken,
     user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, upiId: user.upiId, fssaiNo: user.fssaiNo, language: user.language }
   });
 });
 
 // Refresh Token (Sliding Session)
-// Reads refreshToken from secure HttpOnly cookie and issues a new access token + refreshed cookie
+// Supports Dual-Transport: Reads from HttpOnly cookie first, with fallback to body / x-refresh-token header
 router.post('/refresh', async (req, res) => {
-  const refreshToken = getCookie(req, 'refreshToken') || req.body?.refreshToken;
+  const refreshToken = getCookie(req, 'refreshToken') || req.body?.refreshToken || req.headers['x-refresh-token'];
   if (!refreshToken) {
     return res.status(401).json({ message: 'No active session or refresh token found' });
   }
@@ -95,6 +99,7 @@ router.post('/refresh', async (req, res) => {
 
     return res.json({
       token: tokens.token,
+      refreshToken: tokens.refreshToken,
       user: { id: user._id, name: user.name, email: user.email, businessName: user.businessName, upiId: user.upiId, fssaiNo: user.fssaiNo, language: user.language }
     });
   } catch (err) {

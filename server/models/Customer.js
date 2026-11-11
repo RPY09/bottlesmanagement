@@ -1,4 +1,4 @@
-﻿const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const customerSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -12,5 +12,7 @@ const customerSchema = new mongoose.Schema({
 
 customerSchema.index({ user: 1, createdAt: -1 });
 customerSchema.index({ user: 1, name: 1, createdAt: -1 });
+customerSchema.index({ user: 1, phone: 1 });
+customerSchema.index({ name: 'text', phone: 'text', address: 'text' });
 
 module.exports = mongoose.model('Customer', customerSchema);

@@ -76,15 +76,23 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      // Uses withCredentials: true so the browser automatically sends the HttpOnly cookie
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+      // Uses withCredentials: true so the browser automatically sends the HttpOnly cookie,
+      // while also passing storedRefreshToken in body/header as fallback for iOS Safari / cross-domain ITP blocks.
       const { data } = await axios.post(
         `${baseURL}/auth/refresh`,
-        {},
-        { withCredentials: true }
+        { refreshToken: storedRefreshToken },
+        {
+          withCredentials: true,
+          headers: storedRefreshToken ? { 'x-refresh-token': storedRefreshToken } : {},
+        }
       );
 
       const newToken = data.token;
       localStorage.setItem('token', newToken);
+      if (data.refreshToken) {
+        localStorage.setItem('refreshToken', data.refreshToken);
+      }
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
       }

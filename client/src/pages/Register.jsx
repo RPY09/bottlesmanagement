@@ -23,7 +23,7 @@ export default function Register() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/register', form);
-      login(data.token, data.user);
+      login(data.token, data.user, data.refreshToken);
       toast.success('Account created! Welcome!');
       navigate('/');
     } catch (err) {
