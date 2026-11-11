@@ -124,6 +124,16 @@ router.post('/logout', (req, res) => {
 const { authenticate } = require('../middleware/auth');
 router.get('/profile', authenticate, async (req, res) => {
   const user = await User.findById(req.user.id).select('-password');
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  // Seamless migration for existing users:
+  // If an existing user has a valid access token but does not have the refreshToken cookie yet,
+  // automatically issue the secure HttpOnly cookie so they don't get logged out!
+  if (!getCookie(req, 'refreshToken')) {
+    const { refreshToken } = generateTokens(user._id);
+    res.cookie('refreshToken', refreshToken, getCookieOptions());
+  }
+
   res.json(user);
 });
 
