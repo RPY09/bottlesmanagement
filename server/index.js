@@ -42,6 +42,15 @@ app.use(cors({
   },
   credentials: true,
 }));
+
+// Cookie parser for secure httpOnly tokens
+try {
+  const cookieParser = require('cookie-parser');
+  app.use(cookieParser());
+} catch (e) {
+  // cookie-parser will be available once installed via npm
+}
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

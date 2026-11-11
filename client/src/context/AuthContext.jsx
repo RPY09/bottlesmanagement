@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem('user', JSON.stringify(data));
       })
       .catch(() => {
-        // Retain the cached profile when the refresh request is unavailable.
+        // Retain the cached profile when the profile request fails temporarily
       });
   }, [token]);
 
@@ -34,16 +34,25 @@ export function AuthProvider({ children }) {
     setToken(tokenValue);
     setUser(userData);
     localStorage.setItem('token', tokenValue);
+    localStorage.removeItem('refreshToken'); // Ensure no sensitive refresh token is kept in localStorage
     localStorage.setItem('user', JSON.stringify(userData));
     api.defaults.headers.common['Authorization'] = `Bearer ${tokenValue}`;
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    delete api.defaults.headers.common['Authorization'];
+  const logout = async () => {
+    try {
+      // Inform backend to clear the HttpOnly refreshToken cookie
+      await api.post('/auth/logout');
+    } catch {
+      // Ignore network errors on logout
+    } finally {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      delete api.defaults.headers.common['Authorization'];
+    }
   };
 
   const updateUser = (userData) => {
